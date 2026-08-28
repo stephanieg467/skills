@@ -1,11 +1,10 @@
 ---
 name: create-prd
-description: >-
-  Creates a Product Requirements Document through an evidence-aware,
+description: "Creates a Product Requirements Document through an evidence-aware,
   domain-aware interview and an explicit approval gate. Use when the user
   wants to define why a product change matters, who it affects, required
   observable behavior, scope, product constraints, assumptions, and open
-  questions before architecture or implementation planning.
+  questions before architecture or implementation planning."
 ---
 
 # Create PRD

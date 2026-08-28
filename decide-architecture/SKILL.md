@@ -1,13 +1,12 @@
 ---
 name: decide-architecture
-description: >-
-  Decides the high-level code architecture for an initiative through an
+description: "Decides the high-level code architecture for an initiative through an
   evidence-backed, dependency-aware conversation and explicit approval gate.
   Use when the user provides an approved PRD, tracker issue or epic, URL,
   free-form idea, or reference documents and wants to decide system shape,
   domain ownership, module responsibilities, seams, interfaces, data flow,
   integration contracts, trust boundaries, or consequential technology choices
-  before implementation planning.
+  before implementation planning."
 ---
 
 # Decide Architecture
