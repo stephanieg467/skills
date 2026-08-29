@@ -84,9 +84,9 @@ For the relevant repository or system:
 
 1. Read the approved PRD, issue, epic, brief, and supplied references.
 2. Look for a repository-root `CONTEXT-MAP.md`. If present, use it to load only the relevant bounded-context `CONTEXT.md` files and understand relationships between contexts.
-3. Otherwise, read the relevant root `CONTEXT.md` when present.
+3. Otherwise, read the relevant root `CONTEXT.md` when present. If no relevant `CONTEXT.md` exists, maintain a small provisional vocabulary in session memory and continue; absence of canonical domain documentation is not a blocker.
 4. Read relevant architecture documentation and ADRs. Do not read every ADR indiscriminately; use repository organization, context, and search to find decisions that constrain this initiative.
-5. Note canonical terms, `_Avoid_` synonyms, context ownership, inherited architecture, and existing decisions before discussing changes.
+5. Note canonical terms, `_Avoid_` synonyms, context ownership, inherited architecture, and existing decisions before discussing changes. Keep provisional terms clearly distinct from canonical terms.
 6. Inspect available references before asking whether undocumented references or constraints exist.
 
 Treat canonical domain documentation and accepted ADRs as inherited constraints unless the user explicitly reopens them. Do not mistake an old decision for a current fact when the repository shows it has been superseded.
@@ -206,17 +206,18 @@ The decision-tree session is complete only when:
 
 ## Domain Vocabulary Discipline
 
-Apply the repository's `domain-modeling` skill when available while preserving these rules:
+Use lightweight vocabulary discipline inline; do not invoke the full `domain-modeling` skill by default.
 
 - Read relevant canonical domain documentation before architecture discussion.
-- Challenge vague, overloaded, or conflicting terminology immediately.
+- Challenge vague, overloaded, or conflicting terminology when it affects an architecture decision.
 - Use concrete scenarios and edge cases to sharpen domain relationships and ownership.
-- Update an existing `CONTEXT.md` inline only after the user explicitly resolves the term.
-- Never write an inferred or disputed term.
-- Ask before creating a new `CONTEXT.md`.
+- Never treat an inferred or disputed term as canonical.
+- If no relevant `CONTEXT.md` exists, keep only the terms needed for this initiative in a provisional, session-local vocabulary and continue without blocking. Never create `CONTEXT.md` automatically.
+- At synthesis or approval, ask once whether explicitly resolved terms should become canonical. Treat this as a separate side effect from approval of the architecture.
+- Update an existing `CONTEXT.md` only for explicitly resolved terms and only after the user authorizes that update. Respect the owning context and `CONTEXT-MAP.md`.
+- Creating a new `CONTEXT.md` requires separate explicit approval after the user elects to canonicalize the resolved terms.
 - Keep glossary entries free of implementation details and general programming vocabulary.
-- If the user declines canonical documentation, retain agreed vocabulary in the architecture document.
-- When multiple bounded contexts exist, update the appropriate context and respect `CONTEXT-MAP.md`.
+- If canonicalization is declined, retain only the agreed vocabulary needed in the architecture document.
 
 A glossary entry should remain concise:
 
@@ -226,7 +227,7 @@ A glossary entry should remain concise:
 _Avoid_: <conflicting or discouraged synonyms>
 ```
 
-Domain glossary updates are the only inline documentation side effect allowed before final synthesis approval, and only after the individual term is explicitly resolved. They do not imply permission to write any other artifact.
+Do not edit domain documentation before synthesis and side-effect approval.
 
 ## Existing ADRs and Deviations
 
@@ -298,7 +299,7 @@ Before writing or publishing, present a concise shared-understanding synthesis c
 - coverage audit, including categories marked not relevant;
 - the decisions downstream implementation planning must inherit rather than reopen;
 - proposed status and destination;
-- any proposed glossary updates, ADRs, remote publication, or Jira spike tickets as separate side effects.
+- explicitly resolved vocabulary, plus any proposed canonical glossary updates, ADRs, remote publication, or Jira spike tickets as separate side effects.
 
 Make every consequential assumption visible. Do not write the architecture document during synthesis.
 
@@ -317,7 +318,8 @@ If the user requests an unapproved draft, still present the synthesis and ask fo
 At the approval gate, also confirm any unresolved side effects:
 
 - If the target already exists, ask whether to update it or create a new file. Never overwrite without confirmation.
-- Ask separately before creating a new `CONTEXT.md` or ADR.
+- Ask once whether explicitly resolved terms should become canonical. If yes, request explicit authorization for the proposed update to an existing owning `CONTEXT.md`, or separate approval to create a new `CONTEXT.md`; architecture approval alone authorizes neither.
+- Ask separately before creating an ADR.
 - Ask separately before publishing remotely or creating Jira spike tickets.
 
 ### 9. Write or Publish Approved Artifacts
@@ -423,7 +425,7 @@ Before writing, and again after drafting, verify:
 - every spike has a measurable decision rule and artifact disposition;
 - deferred and provisional decisions are visible;
 - irrelevant coverage categories are explicitly noted;
-- all external writes were explicitly authorized.
+- all glossary and external writes were explicitly authorized.
 
 If correcting a boundary violation could change an approved decision, return to the user rather than guessing.
 
