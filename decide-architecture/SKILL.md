@@ -1,12 +1,13 @@
 ---
 name: decide-architecture
-description: "Decides the high-level code architecture for an initiative through an
+description:
+  'Decides the high-level code architecture for an initiative through an
   evidence-backed, dependency-aware conversation and explicit approval gate.
   Use when the user provides an approved PRD, tracker issue or epic, URL,
   free-form idea, or reference documents and wants to decide system shape,
   domain ownership, module responsibilities, seams, interfaces, data flow,
   integration contracts, trust boundaries, or consequential technology choices
-  before implementation planning."
+  before implementation planning.'
 ---
 
 # Decide Architecture
@@ -56,7 +57,7 @@ Classify information continuously:
 
 Keep evidence attached to the decision it informs. Cite repository paths, document titles, links, commands or tool results, or primary sources as appropriate. Clearly distinguish sourced facts from inferences.
 
-Subagents gather facts and evidence; they do not make user-owned architecture decisions. Verify load-bearing subagent findings directly before relying on them in a recommendation or artifact.
+For repository and codebase reconnaissance, use only the `scout` subagent. Other subagent roles must not be used as substitutes for scouting. External research may use a research-specific agent when current external facts are required. Subagents gather facts and evidence; they do not make user-owned architecture decisions. Verify only load-bearing findings directly before relying on them.
 
 ## Workflow
 
@@ -96,7 +97,11 @@ Infer the mode from the initiative and workspace. Ask only if it remains genuine
 
 #### Brownfield
 
-Scout the relevant codebase surfaces first. Inspect at the architecture level rather than producing a file inventory. Establish:
+Use the `scout` subagent for gathering context from repository code and tests.
+
+Launch at most one fresh-context scout with a narrowly scoped task and require a compressed evidence report covering only the architecture-driving surfaces. The parent may directly inspect canonical documentation and perform targeted verification of load-bearing scout findings, but must not repeat the scout's broad reconnaissance.
+
+Scout the relevant codebase surfaces at the architecture level rather than producing a file inventory. Establish:
 
 - current system shape and module seams;
 - domain and data ownership;
@@ -178,6 +183,7 @@ Use a compact shape such as:
 **Why now:** <why this is on the current frontier>
 
 **Options:**
+
 - **A — <option>:** <material trade-offs>
 - **B — <option>:** <material trade-offs>
 
@@ -327,11 +333,11 @@ Use this structure, adapting headings without dropping required content:
 ```markdown
 # Architecture — <Initiative Name>
 
-| Field | Value |
-|---|---|
-| Status | <Accepted, Provisional — blocked by named spike, or Proposed> |
-| Owner | <owner or TBD> |
-| Last updated | YYYY-MM-DD |
+| Field        | Value                                                         |
+| ------------ | ------------------------------------------------------------- |
+| Status       | <Accepted, Provisional — blocked by named spike, or Proposed> |
+| Owner        | <owner or TBD>                                                |
+| Last updated | YYYY-MM-DD                                                    |
 
 ## Intent and Architecture-Driving Constraints
 
