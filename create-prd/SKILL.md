@@ -5,6 +5,7 @@ description: "Creates a Product Requirements Document through an evidence-aware,
   wants to define why a product change matters, who it affects, required
   observable behavior, scope, product constraints, assumptions, and open
   questions before architecture or implementation planning."
+disable-model-invocation: true
 ---
 
 # Create PRD

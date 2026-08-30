@@ -8,6 +8,7 @@ description:
   domain ownership, module responsibilities, seams, interfaces, data flow,
   integration contracts, trust boundaries, or consequential technology choices
   before implementation planning.'
+disable-model-invocation: true
 ---
 
 # Decide Architecture

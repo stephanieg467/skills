@@ -2,6 +2,7 @@
 name: plan-implementation
 description: Creates a decision-complete implementation plan from a tracker ticket or free-form feature request. Inherits approved architecture, gathers targeted codebase evidence, resolves implementation-changing questions, and defines focused validation for one-pass execution.
 argument-hint: "[ticket key/URL (fetched from your tracker), or a free-form feature description]"
+disable-model-invocation: true
 ---
 
 # Plan a New Task
