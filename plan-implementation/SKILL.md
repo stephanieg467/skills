@@ -42,7 +42,7 @@ Do not add generic user stories, metadata, or business analysis unless they clar
 
 ### 2. Gather Targeted Codebase Evidence
 
-Start with search to locate relevant symbols, callers, tests, configuration, and documentation. Follow with targeted source ranges. Read a full file only when it is small or when its complete lifecycle or contract is necessary.
+Start with search; use scout subagent to locate relevant symbols, callers, tests, configuration, and documentation. Follow with targeted source ranges. Read a full file only when it is small or when its complete lifecycle or contract is necessary.
 
 Investigate only evidence that can affect the implementation approach, including:
 
@@ -54,7 +54,7 @@ Investigate only evidence that can affect the implementation approach, including
 
 Link findings to `path:line-line` ranges or named symbols and summarize why each matters. Do not embed large source excerpts or require broad repository reads. The implementer may inspect additional targeted context to verify current code and task sanity.
 
-Use narrowly scoped reconnaissance subagents only when the repository area is too broad for efficient direct inspection. Require concise, source-linked findings and verify load-bearing claims.
+Require concise, source-linked findings and verify load-bearing claims.
 
 ### 3. Resolve Implementation-Changing Questions — Gate
 
