@@ -58,7 +58,7 @@ Classify information continuously:
 
 Keep evidence attached to the decision it informs. Cite repository paths, document titles, links, commands or tool results, or primary sources as appropriate. Clearly distinguish sourced facts from inferences.
 
-For repository and codebase reconnaissance, use only the `scout` subagent. Other subagent roles must not be used as substitutes for scouting. External research may use a research-specific agent when current external facts are required. Subagents gather facts and evidence; they do not make user-owned architecture decisions. Verify only load-bearing findings directly before relying on them.
+For repository and codebase reconnaissance, use only the `scout` or `Explore subagent. Other subagent roles must not be used as substitutes for scouting. External research may use a research-specific agent when current external facts are required. Subagents gather facts and evidence; they do not make user-owned architecture decisions. Verify only load-bearing findings directly before relying on them.
 
 ## Workflow
 
@@ -98,7 +98,7 @@ Infer the mode from the initiative and workspace. Ask only if it remains genuine
 
 #### Brownfield
 
-Use the `scout` subagent for gathering context from repository code and tests.
+Use the `scout` or `Explore` subagent for gathering context from repository code and tests.
 
 Launch at most one fresh-context scout with a narrowly scoped task and require a compressed evidence report covering only the architecture-driving surfaces. The parent may directly inspect canonical documentation and perform targeted verification of load-bearing scout findings, but must not repeat the scout's broad reconnaissance.
 
