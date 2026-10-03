@@ -1,6 +1,6 @@
 ---
 name: skill-creation
-description: Best practices for writing and improving Claude Code skills (SKILL.md files and their references, scripts, and assets folders). Use whenever the user wants to create a new skill, turn a workflow or set of notes into a skill, review or improve an existing skill, or asks how to write a good skill.
+description: Best practices for writing and improving skills. Use whenever the user wants to create a new skill, turn a workflow or set of notes into a skill, review or improve an existing skill, or asks how to write a good skill.
 ---
 
 # Skill Creation
