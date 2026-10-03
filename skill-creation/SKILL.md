@@ -1,6 +1,6 @@
 ---
 name: skill-creation
-description: Best practices for writing and improving skills (SKILL.md files and their references, scripts, and assets folders). Use whenever the user wants to create a new skill, turn a workflow or set of notes into a skill, review or improve an existing skill.
+description: Best practices for writing and improving Claude Code skills (SKILL.md files and their references, scripts, and assets folders). Use whenever the user wants to create a new skill, turn a workflow or set of notes into a skill, review or improve an existing skill, or asks how to write a good skill.
 ---
 
 # Skill Creation
@@ -34,6 +34,8 @@ The model reads only the name and description when deciding whether to load a sk
 
 Models tend to under-trigger, so be slightly pushy. Name the situations, phrasings, and synonyms that should activate the skill, including cases where the user does not say the obvious keyword. Put all "when to use" guidance in the description, not the body; the body is not read until after the decision is made.
 
+If the skill has disable-model-invocation: true, then the description doesn't need to include the "when to use" guidance, but it should still describe the skill's purpose and what it does.
+
 ## 2. Build from real expertise
 
 Do not let the model invent the skill's content. Source it from domain knowledge, runbooks, code reviews, past reports, and corrections made in earlier sessions. A skill generated from nothing encodes generic advice the model already has.
@@ -62,6 +64,17 @@ When the response must follow a specific shape, put the template in `assets/` or
 
 Add a gotchas or constraints section that names the mistakes to avoid. Explicit negative constraints are unusually effective at preventing recurring errors and unwanted formatting. Where possible, state the reason so the model can generalize instead of pattern-matching.
 
+## 8. Write plain, single-sourced instructions
+
+Dense instructions get misread by the model and are hard for humans to maintain. Write for a reader who follows every word.
+
+- **One rule per bullet, as a full sentence.** Avoid slash lists ("owner/parent/permissions") and "X means Y" chains that pack several rules into one line.
+- **Use if/then for branches.** "If the write times out, read the doc before offering a retry" beats "Timeouts require read-before-retry."
+- **Put the action first; give the reason only when it isn't obvious.**
+- **State each rule once.** Give it one home (gates and workflow in SKILL.md, mechanics in references) and link to it by name everywhere else. Restating a rule in several files lets the copies drift apart.
+- **Let scripts carry the details.** If a script enforces a rule, the prose needs one line saying to run it, not a paragraph explaining what it checks.
+- **Keep safeguards proportionate.** Each gate is one more thing the model has to track through the whole run. Ask what actually goes wrong if a gate is removed. Prefer one general rule ("verify after each write; never retry automatically") over a separate gate for every case.
+
 ## Before finishing a skill
 
 - The description states what the skill does and lists the situations that should trigger it.
@@ -70,6 +83,7 @@ Add a gotchas or constraints section that names the mistakes to avoid. Explicit 
 - Fragile steps are scripts, not prose.
 - Required output formats have a template.
 - Known gotchas are written down.
+- Each rule appears in exactly one file, written as a plain sentence.
 
 ## What not to do
 
@@ -78,3 +92,4 @@ Add a gotchas or constraints section that names the mistakes to avoid. Explicit 
 - Do not inline long reference docs; link them from `references/`.
 - Do not rely on prose for steps that need identical results every run.
 - Do not write a skill from imagination when runbooks, reviews, or past corrections exist.
+- Do not restate the same rule across SKILL.md, references, and the README; link to it instead.
