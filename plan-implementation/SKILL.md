@@ -42,7 +42,7 @@ Do not add generic user stories, metadata, or business analysis unless they clar
 
 ### 2. Gather Targeted Codebase Evidence
 
-Start with search; use scout subagent to locate relevant symbols, callers, tests, configuration, and documentation. Follow with targeted source ranges. Read a full file only when it is small or when its complete lifecycle or contract is necessary.
+Start with search; use scout or explore subagent to locate relevant symbols, callers, tests, configuration, and documentation. Follow with targeted source ranges. Read a full file only when it is small or when its complete lifecycle or contract is necessary.
 
 Investigate only evidence that can affect the implementation approach, including:
 
