@@ -48,7 +48,12 @@ Keep SKILL.md under 500 lines (roughly 5,000 tokens). Anything longer raises cos
 
 ## 4. Use progressive disclosure
 
-Move large or rarely needed material into `references/`. Keep in SKILL.md only what every invocation needs, and add a one-line pointer saying when to read each reference file. The model then loads a reference only for the tasks that require it.
+Move large or rarely needed material into `references/`. Keep in SKILL.md only what every invocation needs. The model then loads a reference only for the tasks that require it.
+
+- Link every reference file directly from SKILL.md, with one line saying when to read it.
+- Do not link from one reference file to another. The model may preview a nested file only partially, for example with `head -100`, and miss content.
+- If a reference file is longer than about 100 lines, start it with a short table of contents. The model then sees the full scope even when it reads only part of the file.
+- Name files after their content, such as `references/form-validation-rules.md` rather than `doc2.md`, and organize directories by domain or feature.
 
 When a skill covers several variants (frameworks, providers, environments), give each its own reference file and keep SKILL.md to the shared workflow plus selection logic.
 
@@ -64,7 +69,14 @@ Over-specifying an open field wastes context and breaks on cases the rules did n
 
 ## 6. Use deterministic scripts
 
-For narrow-bridge steps that must not be improvised, such as math, strict data transforms, or exact command sequences, put the logic in `scripts/` and instruct the model to run the script. Natural-language instructions are re-interpreted on every run; a script produces the same result every time.
+For narrow-bridge steps that must not be improvised, such as math, strict data transforms, or exact command sequences, put the logic in `scripts/`. Natural-language instructions are re-interpreted on every run; a script produces the same result every time.
+
+- Say whether the model should run the script ("Run `scripts/x.py` to …") or read it as reference ("See `scripts/x.py` for the algorithm"). Prefer running, because only the output uses context.
+- Handle expected errors inside the script instead of failing and leaving the model to work them out.
+- Make error messages specific enough to act on, for example "Field 'signature_date' not found. Available fields: customer_name, order_total, …".
+- Give every constant a reason. Do not leave unexplained values like `TIMEOUT = 47`.
+- List the packages the script needs and the command to install them. Do not assume they are installed.
+- If an operation is batch or destructive, use plan, validate, then execute: the model writes a plan file, a script validates it, and only then are the changes applied.
 
 ## 7. Give workflows steps and feedback loops
 
@@ -95,7 +107,7 @@ Dense instructions get misread by the model and are hard for humans to maintain.
 
 - The description, in the third person, states what the skill does and lists the situations that should trigger it.
 - SKILL.md is under 500 lines and every paragraph justifies its token cost.
-- Large or variant-specific material lives in `references/` with pointers.
+- Large or variant-specific material lives in `references/`, linked directly from SKILL.md.
 - Fragile steps are scripts, not prose.
 - Instructions are as specific as each step is fragile, and quality-critical steps loop until a check passes.
 - Required output formats have a template.
