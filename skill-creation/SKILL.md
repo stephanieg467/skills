@@ -21,8 +21,8 @@ Frontmatter fields:
 
 ```yaml
 ---
-name: skill-name
-description: What it does and when to use it.
+name: skill-name                               # max 64 chars: lowercase letters, numbers, hyphens; no XML tags, "anthropic" or "claude"
+description: What it does and when to use it.  # required, max 1,024 chars, no XML tags
 argument-hint: "[optional: what $ARGUMENTS should contain]"
 disable-model-invocation: true   # optional: only the user may invoke it
 ---
@@ -30,7 +30,7 @@ disable-model-invocation: true   # optional: only the user may invoke it
 
 ## 1. The description is the trigger
 
-The model reads only the name and description when deciding whether to load a skill. Write the description around the user's intent, not the implementation: "Use when creating a new article" beats "Article generation pipeline using the CMS API".
+The model reads only the name and description when deciding whether to load a skill. Write the description around the user's intent, not the implementation: "Use when creating a new article" beats "Article generation pipeline using the CMS API". Write it in the third person ("Processes Excel files…", not "I can help…" or "You can use this to…"); it is injected into the system prompt, and a mixed point of view hurts discovery.
 
 Models tend to under-trigger, so be slightly pushy. Name the situations, phrasings, and synonyms that should activate the skill, including cases where the user does not say the obvious keyword. Put all "when to use" guidance in the description, not the body; the body is not read until after the decision is made.
 
@@ -44,7 +44,7 @@ Record every gotcha: the environment-specific mistake that was made once and cor
 
 ## 3. Spend context wisely
 
-Keep SKILL.md under 500 lines (roughly 5,000 tokens). Anything longer raises cost on every invocation and degrades performance by crowding out the task itself. Cut explanations the model does not need, and prefer one clear instruction over three overlapping ones.
+Keep SKILL.md under 500 lines (roughly 5,000 tokens). Anything longer raises cost on every invocation and degrades performance by crowding out the task itself. Assume the model is already very capable, and test each piece of content: Does the model really need this explanation? Can I assume it already knows this? Does this paragraph justify its token cost? Prefer one clear instruction over three overlapping ones.
 
 ## 4. Use progressive disclosure
 
@@ -93,8 +93,8 @@ Dense instructions get misread by the model and are hard for humans to maintain.
 
 ## Before finishing a skill
 
-- The description states what the skill does and lists the situations that should trigger it.
-- SKILL.md is under 500 lines and every section earns its place.
+- The description, in the third person, states what the skill does and lists the situations that should trigger it.
+- SKILL.md is under 500 lines and every paragraph justifies its token cost.
 - Large or variant-specific material lives in `references/` with pointers.
 - Fragile steps are scripts, not prose.
 - Instructions are as specific as each step is fragile, and quality-critical steps loop until a check passes.
