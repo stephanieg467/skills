@@ -52,19 +52,35 @@ Move large or rarely needed material into `references/`. Keep in SKILL.md only w
 
 When a skill covers several variants (frameworks, providers, environments), give each its own reference file and keep SKILL.md to the shared workflow plus selection logic.
 
-## 5. Use deterministic scripts
+## 5. Match freedom to fragility
 
-For steps that must not be improvised, such as math, strict data transforms, or exact command sequences, put the logic in `scripts/` and instruct the model to run the script. Natural-language instructions are re-interpreted on every run; a script produces the same result every time.
+Make each instruction as specific as the task is fragile.
 
-## 6. Provide templates for output
+- **Narrow bridge:** If only one path is safe, give the exact command and say what must not change: "Run exactly `scripts/migrate.sh`. Do not add flags."
+- **Middle ground:** If a preferred pattern exists but details vary, give a template or parameterized pseudocode for the model to adapt.
+- **Open field:** If many paths work, give a heuristic or a short list of priorities and trust the model.
+
+Over-specifying an open field wastes context and breaks on cases the rules did not foresee; see "Keep safeguards proportionate" in §10.
+
+## 6. Use deterministic scripts
+
+For narrow-bridge steps that must not be improvised, such as math, strict data transforms, or exact command sequences, put the logic in `scripts/` and instruct the model to run the script. Natural-language instructions are re-interpreted on every run; a script produces the same result every time.
+
+## 7. Give workflows steps and feedback loops
+
+- If a task has several steps, number them.
+- If a task is long or complex, give a checklist the model copies into its response and ticks off as it goes.
+- If quality matters, add a loop: run the check, fix the errors, and run the check again. Continue only when the check passes. The check can be a script (§6) or a reference document the model compares its output against.
+
+## 8. Provide templates for output
 
 When the response must follow a specific shape, put the template in `assets/` or inline it in SKILL.md and tell the model to fill it in. A concrete template reduces variance and hallucinated structure far more than a prose description of the format.
 
-## 7. Say what not to do
+## 9. Say what not to do
 
 Add a gotchas or constraints section that names the mistakes to avoid. Explicit negative constraints are unusually effective at preventing recurring errors and unwanted formatting. Where possible, state the reason so the model can generalize instead of pattern-matching.
 
-## 8. Write plain, single-sourced instructions
+## 10. Write plain, single-sourced instructions
 
 Dense instructions get misread by the model and are hard for humans to maintain. Write for a reader who follows every word.
 
@@ -81,6 +97,7 @@ Dense instructions get misread by the model and are hard for humans to maintain.
 - SKILL.md is under 500 lines and every section earns its place.
 - Large or variant-specific material lives in `references/` with pointers.
 - Fragile steps are scripts, not prose.
+- Instructions are as specific as each step is fragile, and quality-critical steps loop until a check passes.
 - Required output formats have a template.
 - Known gotchas are written down.
 - Each rule appears in exactly one file, written as a plain sentence.
