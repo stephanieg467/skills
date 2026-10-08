@@ -21,8 +21,8 @@ Frontmatter fields:
 
 ```yaml
 ---
-name: skill-name                               # max 64 chars: lowercase letters, numbers, hyphens; no XML tags, "anthropic" or "claude"
-description: What it does and when to use it.  # required, max 1,024 chars, no XML tags
+name: skill-name            # max 64 chars: lowercase letters, numbers, hyphens; no XML tags, no "anthropic" or "claude"
+description: What it does and when to use it.  # required, max 1,024 chars, no XML tags; prefer short and consise
 argument-hint: "[optional: what $ARGUMENTS should contain]"
 disable-model-invocation: true   # optional: only the user may invoke it
 ---
@@ -84,9 +84,11 @@ For narrow-bridge steps that must not be improvised, such as math, strict data t
 - If a task is long or complex, give a checklist the model copies into its response and ticks off as it goes.
 - If quality matters, add a loop: run the check, fix the errors, and run the check again. Continue only when the check passes. The check can be a script (§6) or a reference document the model compares its output against.
 
-## 8. Provide templates for output
+## 8. Provide templates and examples for output
 
-When the response must follow a specific shape, put the template in `assets/` or inline it in SKILL.md and tell the model to fill it in. A concrete template reduces variance and hallucinated structure far more than a prose description of the format.
+When the response must follow a specific shape, put the template in `assets/` or inline it in SKILL.md and tell the model to fill it in. A concrete template reduces variance and hallucinated structure far more than a prose description of the format. Match the template's strictness to the need: say "ALWAYS use this exact structure" for strict formats, or "a sensible default; adapt as needed" for flexible ones.
+
+If the output depends on style, such as commit messages, give two or three example input and output pairs. Concrete examples convey style better than a template or a prose description.
 
 ## 9. Say what not to do
 
@@ -100,6 +102,9 @@ Dense instructions get misread by the model and are hard for humans to maintain.
 - **Use if/then for branches.** "If the write times out, read the doc before offering a retry" beats "Timeouts require read-before-retry."
 - **Put the action first; give the reason only when it isn't obvious.**
 - **State each rule once.** Give it one home (gates and workflow in SKILL.md, mechanics in references) and link to it by name everywhere else. Restating a rule in several files lets the copies drift apart.
+- **Use one term per concept.** Pick one word, such as "field", and use it throughout; do not mix "field", "box" and "element".
+- **Give a default, not a menu.** Name one approach and add an alternative only for a specific case: "Use pdfplumber. For scanned PDFs, use pytesseract instead."
+- **Avoid content that will go out of date.** Write the current method in the main text, not "before August 2025, use the old API"; move legacy behavior to a collapsed "Old patterns" section.
 - **Let scripts carry the details.** If a script enforces a rule, the prose needs one line saying to run it, not a paragraph explaining what it checks.
 - **Keep safeguards proportionate.** Each gate is one more thing the model has to track through the whole run. Ask what actually goes wrong if a gate is removed. Prefer one general rule ("verify after each write; never retry automatically") over a separate gate for every case.
 
@@ -110,7 +115,7 @@ Dense instructions get misread by the model and are hard for humans to maintain.
 - Large or variant-specific material lives in `references/`, linked directly from SKILL.md.
 - Fragile steps are scripts, not prose.
 - Instructions are as specific as each step is fragile, and quality-critical steps loop until a check passes.
-- Required output formats have a template.
+- Required output formats have a template, and style-dependent output has input and output examples.
 - Known gotchas are written down.
 - Each rule appears in exactly one file, written as a plain sentence.
 
