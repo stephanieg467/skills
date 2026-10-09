@@ -14,7 +14,8 @@ skill-name/
 ├── SKILL.md          required: frontmatter + instructions
 ├── references/       optional: docs loaded only when needed
 ├── scripts/          optional: deterministic code the model runs
-└── assets/           optional: templates and files used in output
+├── assets/           optional: templates and files used in output
+└── config.json       optional: setup answers saved from the user
 ```
 
 Frontmatter fields:
@@ -22,7 +23,7 @@ Frontmatter fields:
 ```yaml
 ---
 name: skill-name            # max 64 chars: lowercase letters, numbers, hyphens; no XML tags, no "anthropic" or "claude"
-description: What it does and when to use it.  # required, max 1,024 chars, no XML tags; prefer short and consise
+description: What it does and when to use it.  # required, max 1,024 chars, no XML tags; prefer short and concise
 argument-hint: "[optional: what $ARGUMENTS should contain]"
 disable-model-invocation: true   # optional: only the user may invoke it
 ---
@@ -40,11 +41,11 @@ If the skill has disable-model-invocation: true, then the description doesn't ne
 
 Do not let the model invent the skill's content. Source it from domain knowledge, runbooks, code reviews, past reports, and corrections made in earlier sessions. A skill generated from nothing encodes generic advice the model already has.
 
-Record every gotcha: the environment-specific mistake that was made once and corrected. These are the highest-value lines in a skill because they are the things the model would otherwise get wrong again.
-
 ## 3. Spend context wisely
 
 Keep SKILL.md under 500 lines (roughly 5,000 tokens). Anything longer raises cost on every invocation and degrades performance by crowding out the task itself. Assume the model is already very capable, and test each piece of content: Does the model really need this explanation? Can I assume it already knows this? Does this paragraph justify its token cost? Prefer one clear instruction over three overlapping ones.
+
+Spend the lines on knowledge that pushes the model out of its default way of thinking, not on what it would do anyway. A frontend design skill, for example, earns its place by steering away from the Inter font and purple gradients.
 
 ## 4. Use progressive disclosure
 
@@ -65,11 +66,11 @@ Make each instruction as specific as the task is fragile.
 - **Middle ground:** If a preferred pattern exists but details vary, give a template or parameterized pseudocode for the model to adapt.
 - **Open field:** If many paths work, give a heuristic or a short list of priorities and trust the model.
 
-Over-specifying an open field wastes context and breaks on cases the rules did not foresee; see "Keep safeguards proportionate" in §10.
+Over-specifying an open field wastes context and breaks on cases the rules did not foresee; see "Keep safeguards proportionate" in §12.
 
 ## 6. Use deterministic scripts
 
-For narrow-bridge steps that must not be improvised, such as math, strict data transforms, or exact command sequences, put the logic in `scripts/`. Natural-language instructions are re-interpreted on every run; a script produces the same result every time.
+Put code in `scripts/` for two reasons. First, narrow-bridge steps that must not be improvised, such as math, strict data transforms, or exact command sequences, need a script: natural-language instructions are re-interpreted on every run, while a script produces the same result every time. Second, helper scripts and libraries let the model spend its turns on composition, deciding what to do next, instead of reconstructing boilerplate.
 
 - Say whether the model should run the script ("Run `scripts/x.py` to …") or read it as reference ("See `scripts/x.py` for the algorithm"). Prefer running, because only the output uses context.
 - Handle expected errors inside the script instead of failing and leaving the model to work them out.
@@ -90,11 +91,29 @@ When the response must follow a specific shape, put the template in `assets/` or
 
 If the output depends on style, such as commit messages, give two or three example input and output pairs. Concrete examples convey style better than a template or a prose description.
 
-## 9. Say what not to do
+## 9. Write down gotchas
 
-Add a gotchas or constraints section that names the mistakes to avoid. Explicit negative constraints are unusually effective at preventing recurring errors and unwanted formatting. Where possible, state the reason so the model can generalize instead of pattern-matching.
+Give every skill a Gotchas section. Gotchas are the highest-signal content in a skill: they come from real failure points, the mistakes the model would otherwise make again. Add to the section each time a new failure is observed.
 
-## 10. Write plain, single-sourced instructions
+Explicit negative constraints are unusually effective at preventing recurring errors. State the reason where possible so the model can generalize instead of pattern-matching. Make each gotcha as specific as these:
+
+- "The `subscriptions` table is append-only. The row you want is the one with the highest version, not the most recent `created_at`."
+- "This field is called `@request_id` in the API gateway and `trace_id` in the billing service. They're the same value."
+- "Staging returns 200 even when the Stripe webhook didn't actually process. Check `payment_events` for the real state."
+
+## 10. Set up config
+
+Some skills need context from the user before they can run; a standup skill, for example, needs to know which Slack channel to post to.
+
+- Store setup answers in `config.json` in the skill directory.
+- If the config is missing or incomplete, ask the user for the values and save them to the file.
+- If the questions are structured or multiple choice, tell the model to use the `AskUserQuestion` tool.
+
+## 11. Keep persistent memory
+
+A skill can keep its own data between runs in an append-only log, JSON files, or a SQLite database. For example, a `standup-post` skill appends every post to `standups.log`, so the next run can tell what changed since yesterday. Store the data in a stable location. For plugin skills, use `${CLAUDE_PLUGIN_DATA}`, which points to a directory that persists.
+
+## 12. Write plain, single-sourced instructions
 
 Dense instructions get misread by the model and are hard for humans to maintain. Write for a reader who follows every word.
 
@@ -116,14 +135,6 @@ Dense instructions get misread by the model and are hard for humans to maintain.
 - Fragile steps are scripts, not prose.
 - Instructions are as specific as each step is fragile, and quality-critical steps loop until a check passes.
 - Required output formats have a template, and style-dependent output has input and output examples.
-- Known gotchas are written down.
+- A Gotchas section records failures actually observed, each with its reason.
+- If the skill needs user context, it reads `config.json` and asks for missing values.
 - Each rule appears in exactly one file, written as a plain sentence.
-
-## What not to do
-
-- Do not describe the implementation in the description; describe the user's intent.
-- Do not pad SKILL.md with background the model already knows.
-- Do not inline long reference docs; link them from `references/`.
-- Do not rely on prose for steps that need identical results every run.
-- Do not write a skill from imagination when runbooks, reviews, or past corrections exist.
-- Do not restate the same rule across SKILL.md, references, and the README; link to it instead.
