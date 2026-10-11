@@ -8,14 +8,14 @@ argument-hint: "[task, specification, ticket, plan, current changes, commit, bra
 
 Implement the requested change through a worker and review it, or independently review an existing change set. In both modes, a fresh, read-only Claude reviewer inspects the actual diff. The parent owns scope, decisions, finding disposition, review rounds, and the final report.
 
-The reviewer must use a different model from any implementation or fix worker. This cross-model independence is the reason for this workflow and must not be weakened or implied when unavailable.
+The reviewer must use a different model from any implementation or fix worker. This cross-model independence is the reason for this workflow and must not be weakened or implied when unavailable. If Claude is unavailable then the next default model to use is gpt-6.1-sol. If this model is also unavailable stop and ask the user to select a model for the review.
 
 ## Invocation Modes
 
 - **Implement + review** — For a task, specification, issue, or approved plan, use the existing worker-to-independent-Claude-review workflow below.
 - **Review existing changes** — When the user asks to review current work, a commit, branch, pull request, or changes since a fixed point, skip initial implementation. Resolve fixed points to commits and identify the base and endpoint explicitly. For changes since a fixed point, the default endpoint is the current checked-out state: review committed changes after the base, selected staged and unstaged worktree changes, and in-scope untracked files read directly. For a branch or pull request comparison, use the merge base and state whether the target includes selected worktree changes. Review any single-commit target with a root-aware patch so an initial commit is not omitted.
 
-  Without an explicit target or fixed point, first select the worktree scope. An unscoped request to review current work includes all non-ignored untracked files; a task-bounded request includes attributable untracked files and requires scope confirmation when ownership is unclear. Review selected staged, unstaged, deleted, and in-scope untracked changes when any exist. Only when the resulting selected scope has no worktree changes, fall back to the latest commit using a root-aware patch. If no change set is available, stop and state clearly that nothing is reviewable.
+Without an explicit target or fixed point, first select the worktree scope. An unscoped request to review current work includes all non-ignored untracked files; a task-bounded request includes attributable untracked files and requires scope confirmation when ownership is unclear. Review selected staged, unstaged, deleted, and in-scope untracked changes when any exist. Only when the resulting selected scope has no worktree changes, fall back to the latest commit using a root-aware patch. If no change set is available, stop and state clearly that nothing is reviewable.
 
 Review-existing mode is read-only unless the user also authorizes fixes. When fixes are authorized, the parent still dispositions findings and one worker applies only accepted findings.
 
