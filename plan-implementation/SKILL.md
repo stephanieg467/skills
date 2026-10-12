@@ -115,22 +115,24 @@ Use the structure below adaptively. Omit empty or irrelevant sections rather tha
 
 <Concise solution shape, affected contracts/data flow, key decisions, and rationale.>
 
-## Changes
+## Tasks
 
-### 1. <Dependency-ordered change>
+### 1. <Dependency-ordered task>
 
 - **Files:** <files to create, update, or remove>
 - **Change:** <concrete behavior and contract details>
 - **Pattern:** <targeted source reference to follow>
 - **Constraints:** <gotchas, compatibility, security, or error behavior when relevant>
-- **Acceptance:** <criteria advanced by this change>
+- **Acceptance:** <criteria advanced by this task>
+- **Validate:** `<focused command>` — <what passing proves for this task>
 
-### 2. <Next change>
+### 2. <Next task>
 
 - **Depends on:** <only when dependency is not obvious>
 - **Files:** <paths>
 - **Change:** <concrete behavior>
 - **Acceptance:** <criteria advanced>
+- **Validate:** `<focused command>` — <what passing proves>
 
 ## Validation
 
@@ -149,6 +151,8 @@ Use the structure below adaptively. Omit empty or irrelevant sections rather tha
 
 Tasks must be concrete enough to execute without reopening settled decisions. Group tightly related edits when that is clearer than artificial file-by-file or independently testable tasks. Include dependency ordering only where it affects execution.
 
+Give every task a **Validate** command that the implementer runs before starting the next task. Use the fastest check that proves this task works, such as its targeted test. If no behavioral check exists until a later task lands, use a static check of the touched files (lint, type check, or syntax check) rather than leaving the field empty.
+
 Validation should match the change's risk and repository conventions. Prefer targeted tests, linting, type checks, builds, or static checks for affected surfaces. Do not require broad suites by default. Clearly distinguish automated commands from manual smoke checks, and never imply that a manual check was automated.
 
 ## Output
@@ -164,6 +168,7 @@ Before writing, verify that:
 - implementation-changing decisions are resolved or explicitly approved assumptions;
 - inherited architecture and repository standards remain intact;
 - tasks are concrete, scoped, and dependency-aware;
+- every task has a Validate command;
 - evidence links target the relevant source ranges or symbols;
 - acceptance criteria are observable and mapped to the planned changes;
 - automated checks are focused, and remaining manual smoke checks are separate;
