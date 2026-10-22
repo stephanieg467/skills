@@ -40,6 +40,20 @@ If the change alters a structure a reviewer must hold in their head (a schema, A
 
 Write as one person talking to another: plain, concise, and specific to this diff.
 
+### How to Test
+
+Write the manual checks a reviewer performs in the running app to see the change work. Leave out linting, static analysis, builds, and automated test commands: CI already runs them, so they give the reviewer nothing to do.
+
+Each step says where to be (page, viewport, user role, config), what to do, and what should happen. Beyond the main path, cover the variations the diff affects, such as other viewports, keyboard use, JavaScript disabled, permissions, or something the change removed. For example, from a mega menu change:
+
+```markdown
+1. On a desktop viewport (above 1440px), click a top-level item that has children. The mega menu should open and the link should not navigate.
+2. Tab to a top-level item and press Space. The mega menu should toggle open and closed.
+3. On mobile, open the menu drawer, expand a primary item, and confirm there is no "View All" link in the submenu.
+```
+
+For a refactor, give a short smoke check of the flows it touches. Omit the section only when nothing changes that a person can observe, such as a CI-only change.
+
 ### Example
 
 Input: a diff adding a `retry` option to `HttpClient.request()`, three commits, branch `ACRO-482-retry-timeouts`.
@@ -67,8 +81,8 @@ Payment provider calls occasionally time out under load, and each timeout curren
 
 ## How to Test
 
-1. Run `npm test -- http-client`.
-2. Set `PAYMENT_MOCK_TIMEOUT=1` and place an order; it succeeds after a retry.
+1. Set `PAYMENT_MOCK_TIMEOUT=1` and place an order. Checkout should succeed after a retry instead of showing "Payment failed".
+2. Set `PAYMENT_MOCK_STATUS=400` and place an order. It should fail right away, with a single request in the payment log.
 
 ## Related Tickets
 

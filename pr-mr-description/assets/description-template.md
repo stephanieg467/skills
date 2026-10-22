@@ -19,7 +19,7 @@
 
 ## How to Test
 
-1. {Step.}
+1. {Manual check in the running app: where to be, what to do, and what should happen. No lint, build, or automated test commands.}
 2. {Continue as needed.}
 
 ## Related Tickets
