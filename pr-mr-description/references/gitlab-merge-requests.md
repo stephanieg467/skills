@@ -33,4 +33,4 @@ glab mr create --target-branch <target_branch_without_origin> --title "<title>" 
 
 - `Closes #123` closes the issue when the MR merges into the default branch.
 - Use `group/project#123` for an issue in another project, and `!123` for a merge request.
-- Write Jira keys such as `ACRO-482` as plain text; GitLab links them only if the Jira integration is enabled.
+- Write Jira keys such as `AMC-482` as plain text; GitLab links them only if the Jira integration is enabled.

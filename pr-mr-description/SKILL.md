@@ -56,7 +56,7 @@ For a refactor, give a short smoke check of the flows it touches. Omit the secti
 
 ### Example
 
-Input: a diff adding a `retry` option to `HttpClient.request()`, three commits, branch `ACRO-482-retry-timeouts`.
+Input: a diff adding a `retry` option to `HttpClient.request()`, three commits, branch `ABC-482-retry-timeouts`.
 
 Output:
 
@@ -86,7 +86,7 @@ Payment provider calls occasionally time out under load, and each timeout curren
 
 ## Related Tickets
 
-Closes ACRO-482
+Closes ABC-482
 ```
 
 ## 4. Apply the description
