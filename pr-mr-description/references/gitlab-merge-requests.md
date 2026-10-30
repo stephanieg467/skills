@@ -1,6 +1,6 @@
 # GitLab Merge Requests
 
-Use the `glab` CLI. Check it with `command -v glab`. If a command fails with an auth error, tell the user to run `! glab auth login`.
+Use the `glab` CLI. Check it with `command -v glab` and `readlink -f "$(command -v glab)"`; if they print `/snap/bin/glab` and `/usr/bin/snap`, it is a snap install. If a command fails with an auth error, tell the user to run `! glab auth login`.
 
 ## Find the merge request
 
@@ -15,7 +15,11 @@ The JSON has `iid`, `web_url`, `title`, `target_branch`, and `description`. Use 
 glab mr update <id> --description-file <temp_file>
 ```
 
-Do not pass `--description -`; it opens an editor instead of reading stdin. If an older `glab` rejects `--description-file`, use `description="$(cat "$temp_file")" && glab mr update <id> --description "$description"`.
+Do not pass `--description -`; it opens an editor instead of reading stdin. If `glab` rejects `--description-file` (older versions) or reports it cannot read the file (snap confinement), pass the content instead:
+
+```bash
+glab mr update <id> --description "$(cat "$temp_file")"
+```
 
 ## Create a merge request
 

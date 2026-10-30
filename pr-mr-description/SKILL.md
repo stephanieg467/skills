@@ -91,7 +91,7 @@ Closes ACRO-482
 
 ## 4. Apply the description
 
-1. Save the Markdown to a temporary file.
+1. Save the Markdown to a temporary file under `$HOME/.cache/pr-mr-description/`, not `/tmp`. A snap-installed `glab` has a private `/tmp` and cannot read files written there.
 2. Verify the CLI is available and update the PR/MR with the command from the platform reference.
 3. If the update succeeds, reply with one line naming the platform, the PR/MR number, and its URL.
 4. If the update fails, report the CLI error and give the Markdown as a manual fallback.
