@@ -54,6 +54,8 @@ Use `workitem create-bulk --from-json <file> --yes`. The top level is an object 
 }
 ```
 
+For plain tickets without custom fields, `workitem create-bulk --from-csv <file> --yes` is simpler. Its columns are `summary, projectKey, issueType, description, label, parentIssueId, assignee`.
+
 1. Create one ticket from the file first and verify it with `workitem view`.
 2. Then run the rest. Bulk create has no JSON output, so verify with `workitem search --jql 'project = ABC AND created >= -10m' --json`.
 

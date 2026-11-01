@@ -10,7 +10,7 @@ Work with Jira Cloud through `acli jira`. Jira tickets are called **work items**
 
 ## 1. Check the connection
 
-1. Run `acli jira auth status`. It shows the active site and account.
+1. Run `acli jira auth status`. It shows the active site and account. If `acli` is not found, point the user to https://developer.atlassian.com/cloud/acli/guides/install-acli/ and stop.
 2. If it is not authenticated, stop and ask the user to run `! acli jira auth login --web` themselves. Never handle an API token in the chat or in a command you run.
 3. Before the first write, confirm that the active site is the one the user means. If it is not, ask before running `acli jira auth switch --site <site>`, because switching changes the target of every later command.
 
@@ -58,8 +58,11 @@ Every write follows the same loop:
 | Unassign | `workitem assign --key KEY --remove-assignee --yes --json` |
 | Change status | `workitem transition --key KEY --status 'In Progress' --yes --json` |
 | Comment | `workitem comment create --key KEY --body-file <file> --json` |
+| Edit or delete a comment | `workitem comment update --key KEY --id <comment-id> --body-file <file>`, `workitem comment delete --key KEY --id <comment-id>` |
 | Link | `workitem link create --out ABC-1 --in ABC-2 --type Blocks --yes` |
 | Clone | `workitem clone --key KEY --to-project XYZ --yes --json` |
+| Unarchive | `workitem unarchive --key KEY --yes --json` |
+| Remove a watcher | `workitem watcher remove --key KEY --user <account-id>` |
 
 Write descriptions and comments longer than one line to a file under `$HOME/.cache/jira-skill/` and pass it with `--description-file` or `--body-file`. This avoids shell quoting bugs. Remove the file afterwards. Plain text is the default; use ADF only when the user needs rich formatting.
 
@@ -87,7 +90,7 @@ For exact syntax of any command, run it with `--help`. The installed binary is t
 `acli jira` has no command for the tasks below. If the user asks for one, say so plainly and offer the Jira web UI (`workitem view KEY --web` opens the ticket). Do not invent an `acli` command and do not fall back to the REST API or a browser on your own.
 
 - Upload or download attachments.
-- Add a watcher.
+- Add a watcher (removing one is possible).
 - Log work or edit time tracking.
 - Move a ticket into a sprint or the backlog, or change its rank.
 - Edit priority, due date, components, fix versions, estimates, parent, or custom field values on an existing ticket.
@@ -104,6 +107,8 @@ For exact syntax of any command, run it with `--help`. The installed binary is t
 - `workitem create --from-file` reads a summary and description as text, not JSON. Use `--from-json` for JSON.
 - `--status` takes the target status name, not a transition name, and the name must exist in that project's workflow. If it fails, view the ticket and ask the user which status they mean.
 - A transition can fail because the workflow requires fields acli cannot set. Report the error and point the user to the web UI.
+- Never pass `--ignore-errors`. A partial failure in a bulk write is a signal to stop and report, because a half-applied change is hard to audit.
+- `watcher remove --user` takes an account ID, not an email. Get it from `workitem list-watchers --key KEY --json`.
 - `--type` is case-sensitive and must be an issue type that exists in the project.
 - `--editor` and commands without `--yes` can open interactive prompts that hang a non-interactive run. Never pass `--editor`.
 - Comment examples in acli's own help omit `create` and use `--issue`. The real command is `workitem comment create --key`.
