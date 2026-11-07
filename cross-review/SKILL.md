@@ -88,7 +88,7 @@ Required: `applyDiscount()` reads `$cart->total` before `recalculate()` runs, so
 - Say what is wrong, why it matters, and the smallest fix.
 - If the fix is an exact small replacement, add a `suggestion` block (GitHub: ```` ```suggestion ````, GitLab: ```` ```suggestion:-0+0 ````).
 
-**Otherwise, for this session's own changes**, send accepted Critical and Required findings to one worker subagent to fix. Then run a fresh review limited to the fixes and the code they touch. Stop after three review rounds, or earlier when no Critical or Required finding remains. Do not spend a round on Consider or Nit items; list them for the user instead.
+**Otherwise, for this session's own changes**, send accepted Critical and Required findings to one worker subagent to fix. The worker runs focused checks and affected runtime journeys through the project's `verify-<app>` skill, retaining evidence after cleanup. If runtime verification is needed but no relevant skill exists, ask before creating one with `create-verification-skill`; declined or unavailable setup is blocked verification. Record not applicable with a reason for fixes without runtime behavior. Report failed or blocked verification explicitly rather than assigning routine smoke checks to the user. Then run a fresh review limited to the fixes and the code they touch. Stop after three review rounds, or earlier when no Critical or Required finding remains. Do not spend a round on Consider or Nit items; list them for the user instead.
 
 ## 7. Report
 
@@ -98,7 +98,7 @@ For non-comment mode, end with:
 - the reviewer's verdict, after your verification;
 - findings fixed, rejected (with reason), escalated, and left as Consider or Nit;
 - checks the reviewer or worker ran, with outcomes;
-- manual smoke checks the user should still do.
+- runtime verification results and evidence for fixes, plus failed, blocked, or missing coverage. For read-only reviews, report evidence gaps without claiming to have driven the app.
 
 ## Gotchas
 

@@ -50,7 +50,8 @@ Investigate only evidence that can affect the implementation approach, including
 - affected caller/callee, schema, persistence, or registration contracts;
 - project-specific standards from `AGENTS.md`, `CLAUDE.md`, or equivalent instructions;
 - relevant dependency versions and local integration patterns;
-- focused test examples and available validation commands.
+- focused test examples and available validation commands;
+- existing project-local verification skills and feature-map journeys for the affected behavior.
 
 Link findings to `path:line-line` ranges or named symbols and summarize why each matters. Do not embed large source excerpts or require broad repository reads. The implementer may inspect additional targeted context to verify current code and task sanity.
 
@@ -82,7 +83,10 @@ Choose the smallest approach consistent with inherited architecture and reposito
 - error, authorization, security, concurrency, and compatibility behavior;
 - dependency order and independently executable work;
 - critical tests and focused automated checks;
-- manual smoke checks that cannot be automated economically.
+- agent-run runtime verification through the project's `verify-<app>` skill, with journeys and observable results tied to acceptance criteria;
+- prerequisites that block verification or genuinely require human access or judgment.
+
+If runtime verification is needed but no relevant skill exists, ask before adding a `create-verification-skill` setup task. Planning does not generate or drive the app. If setup is declined, record runtime verification as blocked rather than silently assigning smoke checks to the user. If an existing map lacks a required journey, include a scoped map or harness update task.
 
 Make consequential choices and rationale explicit. Avoid speculative extensibility and unrelated refactors.
 
@@ -140,9 +144,16 @@ Use the structure below adaptively. Omit empty or irrelevant sections rather tha
 
 - `<targeted command>` — <behavior or affected surface it validates>
 
-### Manual Smoke Checks
+### Runtime Verification
 
-- <user-visible or environment-dependent check that remains manual>
+- **Skill:** <project-local verify skill path, or approved setup task>
+- **Journeys:** <feature-map paths and affected entry points tied to acceptance criteria>
+- **Expected results:** <observable outcomes and side effects>
+- **Evidence:** <artifacts to capture using the skill's evidence convention>
+
+### Verification Blockers
+
+- <unmet prerequisite, affected criterion, and what would unblock it; omit when empty>
 
 ## Assumptions and Deferred Items
 
@@ -153,7 +164,7 @@ Tasks must be concrete enough to execute without reopening settled decisions. Gr
 
 Give every task a **Validate** command that the implementer runs before starting the next task. Use the fastest check that proves this task works, such as its targeted test. If no behavioral check exists until a later task lands, use a static check of the touched files (lint, type check, or syntax check) rather than leaving the field empty.
 
-Validation should match the change's risk and repository conventions. Prefer targeted tests, linting, type checks, builds, or static checks for affected surfaces. Do not require broad suites by default. Clearly distinguish automated commands from manual smoke checks, and never imply that a manual check was automated.
+Validation should match the change's risk and repository conventions. Prefer targeted tests, linting, type checks, builds, or static checks for affected surfaces. Do not require broad suites or full-map maintenance audits by default. Plan agent-run runtime verification for changed user-facing behavior, separately from focused automated checks. For changes with no runtime behavior to exercise, record runtime verification as not applicable with a reason. Never imply that a planned or blocked journey has passed.
 
 ## Output
 
@@ -171,7 +182,7 @@ Before writing, verify that:
 - every task has a Validate command;
 - evidence links target the relevant source ranges or symbols;
 - acceptance criteria are observable and mapped to the planned changes;
-- automated checks are focused, and remaining manual smoke checks are separate;
+- automated checks are focused, runtime journeys cover the affected behavior, and verification blockers are explicit;
 - the plan does not require unrelated refactoring or broad reading.
 
-After writing, report the plan path, approach, key risks or assumptions, and the manual smoke checks the implementer should report to the user. The implementer should still verify targeted source context and commands against the current worktree before editing.
+After writing, report the plan path, approach, key risks or assumptions, runtime verification journeys, and any verification blockers. The implementer should still verify targeted source context and commands against the current worktree before editing.

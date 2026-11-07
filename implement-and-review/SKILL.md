@@ -27,7 +27,7 @@ For either mode, resolve any supplied specification, plan, or issue for the **Sp
 - Preserve unrelated dirty and untracked files. Never clean, reset, stage, commit, or overwrite them.
 - Keep implementation and review bounded to the approved task.
 - Escalate product, architecture, API, or scope decisions that are not already approved.
-- Run focused automated checks appropriate to the changed surfaces. Report remaining manual smoke checks to the user.
+- Run focused automated checks and agent-run project verification for implementation and authorized fixes. In read-only review mode, assess existing runtime evidence and report coverage gaps without generating skills or driving mutating journeys.
 - Do not write a review-report file unless the user requests one.
 - Use at most three review rounds. Stop earlier when no blocker or finding worth fixing now remains; do not chase optional polish.
 
@@ -53,11 +53,22 @@ In implement + review mode, give the worker a compact, decision-complete brief c
 - relevant targeted source references;
 - acceptance criteria;
 - baseline files that must remain untouched;
-- focused automated checks and manual checks to report.
+- focused automated checks, runtime verification journeys, and expected evidence.
 
 The worker validates the brief against current code, implements the smallest coherent change, and runs focused checks. It must pause for any required unapproved product, architecture, API, or scope decision rather than guessing.
 
-After implementation, the parent inspects status and bounded diff summaries. Confirm that the diff is attributable to the task and that unrelated baseline changes remain intact before review. Skip this section in review-existing mode.
+After implementation, the parent inspects status and bounded diff summaries. Confirm that the diff is attributable to the task and that unrelated baseline changes remain intact before review. Skip initial implementation in review-existing mode.
+
+### Runtime verification contract
+
+Apply this contract to implementation and authorized fixes:
+
+- Locate and read the relevant project-local `verify-<app>` skill and feature map using repository conventions; ask if the target is ambiguous.
+- If runtime verification is needed but no relevant skill exists, ask before having the worker run `create-verification-skill`. Declined, unavailable, or unproved setup is a blocker, not permission to skip verification silently.
+- Have one worker follow the skill's launch, doctor, drive, evidence, and cleanup instructions for the acceptance criteria and affected entry points. Only that worker drives the instance. Add or correct missing recipes within the approved scope, and escalate wider changes.
+- After fixes, rerun affected automated checks and runtime journeys against the final code. Generation's one-feature proof is not task verification. Confirm evidence survives cleanup, including failed attempts.
+- Record each required journey as pass, fail, or blocked, with observed results, evidence paths, and tested revision including relevant uncommitted changes. If no runtime behavior is affected, record not applicable with a reason.
+- Report missing access, tools, hardware, human-only judgment, or unsafe external effects as blockers and ask for the minimum action needed. Do not bypass approval, label a skipped journey passed, or declare implementation complete while required verification is failed or blocked.
 
 ## 3. Run a Fresh Read-Only Claude Review
 
@@ -107,7 +118,7 @@ Do not forward reviewer output mechanically. Resolve duplicates and preserve the
 
 ## 5. Apply Accepted Fixes Through One Worker
 
-In implement + review mode, or when the user has authorized fixes in review-existing mode, send one worker only the accepted findings, evidence, constraints, and focused checks. Prefer the original implementation worker when continuity is useful, but keep a single writer. The worker applies only accepted fixes and reports the resulting diff and check outcomes. Otherwise, keep review-existing mode read-only and report the dispositions.
+In implement + review mode, or when the user has authorized fixes in review-existing mode, send one worker only the accepted findings, evidence, constraints, and focused checks. Prefer the original implementation worker when continuity is useful, but keep a single writer. The worker applies only accepted fixes, follows the Runtime verification contract in step 2, and reports the resulting diff and check outcomes. Otherwise, keep review-existing mode read-only and report the dispositions.
 
 The parent confirms that fixes did not widen scope or disturb unrelated files.
 
@@ -121,7 +132,8 @@ Stop before the limit when:
 
 - no blocker remains;
 - no evidence-backed finding is worth fixing now;
-- focused automated checks support the acceptance criteria.
+- focused automated checks support the acceptance criteria;
+- required runtime journeys pass, or runtime verification is not applicable with a reason. In read-only review mode, report evidence gaps without claiming the app was verified.
 
 Optional cleanup, taste-based refactors, and speculative hardening do not justify another round.
 
@@ -134,7 +146,7 @@ Before reporting:
 - confirm affected cross-file contracts were checked;
 - run or confirm focused automated checks;
 - verify no files were staged, committed, reset, or cleaned by the workflow;
-- distinguish automated results from manual smoke checks still owed by the user.
+- distinguish automated checks, observed runtime results, and failed or blocked coverage; do not turn unrun journeys into routine homework for the user.
 
 Report:
 
@@ -143,6 +155,6 @@ Report:
 - reviewer model and any implementation or fix worker model, or the explicit independence limitation;
 - review rounds and disposition of findings;
 - commands with outcomes;
-- manual smoke checks;
+- runtime verification results, tested state, evidence paths, cleanup outcomes, and any verification blockers;
 - residual risks and escalated decisions;
 - staging/commit status and preservation of unrelated worktree files.

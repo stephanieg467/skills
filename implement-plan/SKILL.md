@@ -1,6 +1,6 @@
 ---
 name: implement-plan
-description: Executes an approved implementation plan from plan-implementation task by task. Each task is implemented, checked with its own Validate command, and committed before the next one starts. Ends with the plan's focused checks, an implementation report saved next to the plan, and a handoff to cross-review.
+description: Executes an approved implementation plan from plan-implementation task by task. Each task is implemented, checked with its own Validate command, and committed before the next one starts. Ends with focused checks and agent-run project verification, an implementation report saved next to the plan, and a handoff to cross-review.
 argument-hint: "[path-to-plan]"
 disable-model-invocation: true
 ---
@@ -61,7 +61,11 @@ Write the simplest code that satisfies the task. Do not add logging, documentati
 
 1. Run each command under **Validation → Focused Automated Checks** once. Do not re-run a command that already passed unless the code changed since.
 2. If a check fails, fix the cause, commit the fix as its own commit, and re-run that check.
-3. Do not run, or claim to have run, the **Manual Smoke Checks**. They are for the user.
+3. For the plan's **Runtime Verification**, locate and read the project's relevant `verify-<app>/SKILL.md`, feature-map index, and required feature files. Follow repository skill-location conventions; ask when the target is ambiguous. For older plans, treat **Manual Smoke Checks** as runtime journeys to execute, not homework to hand back.
+4. If runtime verification is needed but no relevant skill exists, ask before running `create-verification-skill`. If setup is declined, unavailable, or unproved, report verification as blocked. Do not create a skill silently. If no runtime behavior is affected, record not applicable with the reason instead.
+5. Follow the verification skill's launch, doctor, drive, evidence, and cleanup instructions for journeys covering the plan's acceptance criteria and affected entry points. Update missing or stale recipes within the approved scope; escalate changes that widen it. Generation's one-feature proof is not a substitute for these journeys.
+6. Fix in-scope failures, commit the fix separately, and rerun affected automated checks and runtime journeys. Follow cleanup after failed attempts too. Confirm proof artifacts survive final cleanup and describe the tested revision and relevant uncommitted changes.
+7. Record pass, fail, or blocked for each required journey, with observed results and evidence paths. Missing credentials, unavailable tooling or hardware, human-only judgment, or unsafe external side effects are explicit blockers; ask for the minimum action needed to unblock them. Never bypass approval or mark skipped checks as passed. If required verification remains failed or blocked, the report status is PARTIAL.
 
 ## 6. Write the report
 
@@ -83,19 +87,25 @@ Use this structure, and omit sections that would only say "none" except Deviatio
 ## Validation
 - `<command>` — pass/fail <counts>
 
+## Runtime verification
+- **Skill:** <path, or not applicable with reason>
+- <journey and entry point> — pass/fail/blocked — <observed result> — <evidence paths>
+- **Tested state:** <revision and relevant uncommitted changes>
+- **Cleanup:** <outcome; evidence retained>
+
 ## Deviations from the plan
 <What differed and why, or "None". Reviewers treat these as intentional.>
 
 ## Noticed, not touched
 - <out-of-scope observation>
 
-## Manual smoke checks for the user
-- <copied from the plan>
+## Verification blockers
+- <affected criterion, unmet prerequisite, and minimum action needed; omit when empty>
 ```
 
 ## 7. Hand off
 
-Report the branch, the commit list, the report path, any deviations, and the manual smoke checks the user should run. Then suggest the review command:
+Report the branch, the commit list, the report path, any deviations, runtime verification results with evidence paths, and any verification blockers. Then suggest the review command:
 
 ```text
 /cross-review <reviewer-model> <plan-path> <report-path>
@@ -105,6 +115,6 @@ Report the branch, the commit list, the report path, any deviations, and the man
 
 - `plan-implementation` puts tests inside each task. Writing all tests after the last task breaks the per-task Validate gate.
 - Plan files and reports are working artifacts and must never be committed. A blanket `git add -A` or `git commit -a` will pick them up, along with the user's unrelated changes, so stage explicit paths.
-- "Run all validation" does not include manual smoke checks. Reporting one as passed when it was never run is the worst failure this skill can have.
+- Runtime journeys are the agent's responsibility, including smoke checks in older plans. A generated skill or passing unit test does not prove a user journey; report only what was actually driven.
 - Running the full suite, build, and lint after every task wastes time. The task's Validate command is the per-task gate; the focused checks run once at the end.
 - If a Validate command fails for reasons unrelated to the change (a missing service, flaky infrastructure), do not mark the task as passing. Report the exact failure and ask.

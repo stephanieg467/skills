@@ -14,7 +14,7 @@ A test earns its place only when it can catch a realistic regression that would 
 - Test application behavior, business rules, and trust boundaries.
 - Do not write tests that mirror the implementation or data. Examples: asserting config, YAML, or constant values; asserting that a method returns the literal it hardcodes; asserting the contents of a file the test just read. A test that must be edited every time the code changes is not a test.
 - Prefer the smallest test level that still covers the real risk.
-- If the real risk can only be covered by a heavier test (kernel, functional, end-to-end) that is not practical, do not substitute a shallow unit test. List the manual smoke check instead.
+- If the real risk can only be covered by a heavier test (kernel, functional, end-to-end) that is not practical, do not substitute a shallow unit test. Use the project's verification skill to exercise the real user journey when feasible; otherwise report the coverage gap and unmet prerequisite explicitly.
 - When reviewing or cleaning up, deleting low-value tests is a valid and encouraged outcome.
 
 ## Keep tests and production code separate
