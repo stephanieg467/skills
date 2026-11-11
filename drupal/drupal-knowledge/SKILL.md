@@ -48,7 +48,7 @@ Read only the file the task needs.
 - `references/translation-and-twig.md` — read when writing user-facing strings or Twig templates.
 - `references/drush-scaffolding.md` — read when generating code, creating content types or fields, or generating test content.
 - `references/version-compatibility.md` — read when targeting both D10 and D11, removing deprecations, upgrading core, or applying recipes.
-- `references/testing-and-quality.md` — read when writing Drupal tests or setting up PHPCS/PHPStan. For test quality rules, use the `testing-standards` skill.
+- `references/static-checks.md` — read when setting up or fixing PHPCS or PHPStan. For writing or running tests, use the `testing-standards` skill.
 - `references/debugging.md` — read when a change does not take effect, a service or class is not found, or the site throws errors.
 
 ## Gotchas
