@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 # Implement Plan
 
-Execute the plan at `$ARGUMENTS`. The plan is written by `plan-implementation`, which inherits from `decide-architecture`. Its decisions are settled: build what it says, in thin verified steps, and do not redesign it.
+Execute the plan at `$ARGUMENTS`. The plan is written by `plan-implementation`, which inherits from `decide-architecture`. Its decisions are settled: build what it says, in thin verified steps, and do not redesign it. The plan decides *what* to build; it does not replace the skills that govern *how* code is written.
 
 If `$ARGUMENTS` is empty or the file cannot be read, ask for the plan path before doing anything else.
 
@@ -17,6 +17,7 @@ If `$ARGUMENTS` is empty or the file cannot be read, ask for the plan path befor
 2. Spot-check the `path:line` references in Implementation Evidence against the current worktree. Plans go stale; a moved symbol is fine, a missing contract is not.
 3. If a task has no **Validate** command, use a static check of its touched files (lint, type check, or syntax check).
 4. If the plan conflicts with the code in a way that changes an inherited decision, a contract, or scope, stop and ask before editing.
+5. Load the companion skills. List the file types and kinds of change the tasks involve, then invoke every available skill whose description matches them before starting Task 1. For example: `typescript-best-practices` for `.ts`/`.tsx` files, `testing-standards` for any test or fixture change, `code-comments` for new or changed functions and modules, and a framework skill (React, MUI, Drupal, and so on) for the code it covers. Follow them while you implement each task. If a companion skill conflicts with the plan's Inherited Decisions or the repository's conventions, the plan wins; record the conflict in the report.
 
 ## 2. Prepare the branch
 
@@ -34,7 +35,7 @@ If `git log` already shows commits for some of the plan's tasks on this branch, 
 
 Run tasks inline by default; you keep the full context across tasks.
 
-If the plan has more than about six tasks, or the tasks together span many files, delegate each task to a fresh worker subagent instead. Give the worker the task block verbatim, plus Intent and Scope, Inherited Decisions, and the evidence lines the task references. The worker implements and runs the Validate command; you review its diff, then commit (step 4.4). Run workers one at a time, in plan order, because later tasks build on earlier ones.
+If the plan has more than about six tasks, or the tasks together span many files, delegate each task to a fresh worker subagent instead. Give the worker the task block verbatim, plus Intent and Scope, Inherited Decisions, the evidence lines the task references, and the names of the companion skills it must load before editing. The worker implements and runs the Validate command; you review its diff, then commit (step 4.4). Run workers one at a time, in plan order, because later tasks build on earlier ones.
 
 ## 4. Execute each task in order
 
@@ -81,6 +82,9 @@ Use this structure, and omit sections that would only say "none" except Deviatio
 ## Summary
 <What was built, 2-4 sentences.>
 
+## Companion skills
+- <skill> — <why it applied>; <conflicts with the plan and how they were resolved, if any>
+
 ## Tasks
 - <task title> — <commit sha> — <files>
 
@@ -114,6 +118,7 @@ Report the branch, the commit list, the report path, any deviations, runtime ver
 ## Gotchas
 
 - `plan-implementation` puts tests inside each task. Writing all tests after the last task breaks the per-task Validate gate.
+- A loaded workflow skill does not switch off the others. Passing Validate commands, lint, and type checks do not prove the code meets the standards in `typescript-best-practices`, `testing-standards`, and similar skills; load them in step 1.5, not after the fact.
 - Plan files and reports are working artifacts and must never be committed. A blanket `git add -A` or `git commit -a` will pick them up, along with the user's unrelated changes, so stage explicit paths.
 - Runtime journeys are the agent's responsibility, including smoke checks in older plans. A generated skill or passing unit test does not prove a user journey; report only what was actually driven.
 - Running the full suite, build, and lint after every task wastes time. The task's Validate command is the per-task gate; the focused checks run once at the end.
