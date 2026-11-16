@@ -109,10 +109,20 @@ Use this structure, and omit sections that would only say "none" except Deviatio
 
 ## 7. Hand off
 
-Report the branch, the commit list, the report path, any deviations, runtime verification results with evidence paths, and any verification blockers. Then suggest the review command:
+End with this handoff. Always include the report path, written in full from the repository root. Omit the Deviations and Blockers lines when they are empty.
 
-```text
-/code-review <plan-path>
+```markdown
+**Status:** COMPLETE | PARTIAL   **Branch:** <branch>
+**Report:** `<plan-dir>/<plan-slug>.report.md`
+
+**Commits:**
+- <sha> <message>
+
+**Runtime verification:** <pass/fail/blocked per journey, with evidence paths>
+**Deviations:** <one line each>
+**Blockers:** <one line each>
+
+Next: `/code-review <plan-path> <plan-dir>/<plan-slug>.report.md`
 ```
 
 ## Gotchas

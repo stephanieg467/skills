@@ -1,7 +1,7 @@
 ---
 name: code-review
 description: "Reviews the changes since a fixed point (commit, branch, tag, or merge-base) along three axes in parallel sub-agents: Standards (repo docs and matching coding-standard skills), Spec (the plan, report, Jira ticket, or PR/MR description it implements), and Technical (correctness, security, performance, simplicity). Verifies every finding before reporting, and can fix accepted findings or output copy-pasteable PR/MR comments. Use when the user wants to review a branch, a PR or MR, work-in-progress changes, or the result of implement-plan, or asks to \"review since X\"."
-argument-hint: "[fixed-point] [plan-path] [fix|comment]"
+argument-hint: "[fixed-point] [spec-paths...] [fix|comment]"
 ---
 
 Three-axis review of the diff between `HEAD` and a fixed point:
@@ -18,10 +18,10 @@ Different models have different blind spots. If this session's model wrote the c
 
 ### 1. Parse arguments
 
-Usage: `/code-review [fixed-point] [plan-path] [fix|comment]`, in any order.
+Usage: `/code-review [fixed-point] [spec-paths...] [fix|comment]`, in any order.
 
 - The exact token `fix` turns on fix mode (step 8). The exact token `comment` turns on comment mode (step 7). Without either, fix is the default.
-- A token that is an existing file is the plan path.
+- Every token that is an existing file is a spec path, such as a plan or an implementation report.
 - Any other token is the fixed point (a commit SHA, branch name, tag, `main`, `HEAD~5`, etc.).
 - If there is no fixed point, use the default branch: `git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@'`, falling back to `main`. Say which one you used.
 
@@ -35,13 +35,10 @@ Before going further, confirm the fixed point resolves (`git rev-parse <fixed-po
 
 Look for the originating spec, in this order, and stop at the first hit:
 
-1. The plan path from the arguments.
-2. `.claude/plans/<slug>.md`, where `<slug>` is the branch name without its `feature/` prefix (`implement-plan` names branches `feature/<plan-slug>`).
-3. A Jira key (`ABC-123`) in the branch name or commit messages, fetched with the `jira` skill: summary, description, and acceptance criteria.
-4. The current branch's PR/MR description: `gh pr view --json title,body` on GitHub, `glab mr view` on GitLab.
-5. If nothing is found, ask the user where the spec is. If they say there isn't one, skip the **Spec** sub-agent and report "no spec available".
-
-If the spec is a plan, also pass its `<plan-dir>/<slug>.report.md` when it exists.
+1. The spec paths from the arguments.
+2. A Jira key (`ABC-123`) in the branch name or commit messages, fetched with the `jira` skill: summary, description, and acceptance criteria.
+3. The current branch's PR/MR description: `gh pr view --json title,body` on GitHub, `glab mr view` on GitLab.
+4. If nothing is found, ask the user where the spec is. If they say there isn't one, skip the **Spec** sub-agent and report "no spec available".
 
 ### 4. Identify the standards sources
 
