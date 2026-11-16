@@ -1,6 +1,6 @@
 ---
 name: implement-plan
-description: Executes an approved implementation plan from plan-implementation task by task. Each task is implemented, checked with its own Validate command, and committed before the next one starts. Ends with focused checks and agent-run project verification, an implementation report saved next to the plan, and a handoff to cross-review.
+description: Executes an approved implementation plan from plan-implementation task by task. Each task is implemented, checked with its own Validate command, and committed before the next one starts. Ends with focused checks and agent-run project verification, an implementation report saved next to the plan, and a handoff to code-review.
 argument-hint: "[path-to-plan]"
 disable-model-invocation: true
 ---
@@ -112,7 +112,7 @@ Use this structure, and omit sections that would only say "none" except Deviatio
 Report the branch, the commit list, the report path, any deviations, runtime verification results with evidence paths, and any verification blockers. Then suggest the review command:
 
 ```text
-/cross-review <reviewer-model> <plan-path> <report-path>
+/code-review <plan-path>
 ```
 
 ## Gotchas
