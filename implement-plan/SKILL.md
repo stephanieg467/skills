@@ -35,7 +35,7 @@ If `git log` already shows commits for some of the plan's tasks on this branch, 
 
 Run tasks inline by default; you keep the full context across tasks.
 
-If the plan has more than about six tasks, or the tasks together span many files, delegate each task to a fresh worker subagent instead. Give the worker the task block verbatim, plus Intent and Scope, Inherited Decisions, the evidence lines the task references, and the names of the companion skills it must load before editing. The worker implements and runs the Validate command; you review its diff, then commit (step 4.4). Run workers one at a time, in plan order, because later tasks build on earlier ones.
+If the plan has more than about six tasks, or the tasks together span many files, delegate each task to a fresh worker subagent instead. Write each brief from [references/worker-brief.md](references/worker-brief.md). The worker implements the task and meets its Done criteria; you review its diff, then commit (step 4.4). Run workers one at a time, in plan order, because later tasks build on earlier ones.
 
 ## 4. Execute each task in order
 
@@ -46,6 +46,7 @@ For each task under `## Tasks`:
 3. **Validate** by running the task's **Validate** command. If it fails, fix and re-run. Do not start the next task until it passes. If passing would require work outside this task, stop and ask.
 4. **Commit** only the files this task changed: `git add <paths>`, then commit using the repository's message convention (check `git log --oneline -10`), for example `feat: <task title>`. Never stage plan files, report files, `docs/plans/*`, `docs/adr/*`, or `CONTEXT.md`.
 5. **Record** anything that differed from the plan, and why, for the report's Deviations section.
+6. **Carry lessons forward** (delegated mode only). After reviewing the worker's diff, append one line to the brief's Lessons list for each thing you corrected, each rule the worker broke, and each new shared helper or contract later tasks should reuse. Write each line as one general sentence, not a story about this task. Pass the updated list into the next brief.
 
 ### Deviations
 
@@ -99,6 +100,9 @@ Use this structure, and omit sections that would only say "none" except Deviatio
 
 ## Deviations from the plan
 <What differed and why, or "None". Reviewers treat these as intentional.>
+
+## Delegation lessons
+- <final Lessons list from the worker briefs; omit for inline runs>
 
 ## Noticed, not touched
 - <out-of-scope observation>
