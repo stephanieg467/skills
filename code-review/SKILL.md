@@ -36,7 +36,7 @@ Before going further, confirm the fixed point resolves (`git rev-parse <fixed-po
 Look for the originating spec, in this order, and stop at the first hit:
 
 1. The spec paths from the arguments.
-2. A Jira key (`ABC-123`) in the branch name or commit messages, fetched with the `jira` skill: summary, description, and acceptance criteria.
+2. If jira skill exists. A Jira key (`ABC-123`) in the branch name or commit messages, fetched with the `jira` skill: summary, description, and acceptance criteria.
 3. The current branch's PR/MR description: `gh pr view --json title,body` on GitHub, `glab mr view` on GitLab.
 4. If nothing is found, ask the user where the spec is. If they say there isn't one, skip the **Spec** sub-agent and report "no spec available".
 

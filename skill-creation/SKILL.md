@@ -1,6 +1,6 @@
 ---
 name: skill-creation
-description: Best practices for writing and improving skills. Use whenever the user wants to create a new skill, turn a workflow or set of notes into a skill, review or improve an existing skill.
+description: Best practices for writing and improving skills. Use whenever creating, adapting, or editing a skill or any SKILL.md file, even a small change. This includes writing a new skill, making your own version of an installed or third-party skill, turning a workflow, prompt, or notes into a skill, changing what a skill does or which agent or tool it hands off to, and reviewing or improving an existing skill.
 ---
 
 # Skill Creation

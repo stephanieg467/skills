@@ -293,5 +293,5 @@ After writing:
 2. Briefly summarize the PRD.
 3. Report the number of product requirements and open questions.
 4. Mention important assumptions, unknowns, or unresolved terminology.
-5. If no canonical domain context exists, repeat that fact and suggest the future `domain-modeling` skill.
+5. If no canonical domain context exists, repeat that fact and suggest the `domain-modeling` skill.
 6. Recommend moving next to the `decide-architecture` skill without proposing or making architecture decisions.
