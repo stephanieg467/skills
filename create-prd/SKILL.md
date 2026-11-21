@@ -51,22 +51,22 @@ When evidence is cited in the PRD, identify its source with a path, link, docume
 
 For an existing repository:
 
-1. Look for a repository-root `CONTEXT-MAP.md`.
-2. If no context map exists, look for a repository-root `CONTEXT.md`.
-3. If a context map exists, use it to load only bounded contexts relevant to the proposed change. Do not read every context by default.
+1. Look for a repository-root `GLOSSARY-MAP.md`.
+2. If no glossary map exists, look for a repository-root `GLOSSARY.md`.
+3. If a glossary map exists, use it to load only bounded contexts relevant to the proposed change. Do not read every context by default.
 4. Extract canonical terms, their meanings, and any `_Avoid_` synonyms from the relevant context documents.
 5. Read relevant product documentation.
 6. Inspect code only when necessary to establish existing user-visible behavior. Do not inspect code to design a solution.
 7. Read only relevant existing ADRs and treat them as product constraints where applicable, not as invitations to make new architectural decisions.
-8. Do not edit `CONTEXT.md`, `CONTEXT-MAP.md`, ADRs, glossaries, or other domain documentation.
+8. Do not edit `GLOSSARY.md`, `GLOSSARY-MAP.md`, ADRs, glossaries, or other domain documentation.
 
-If neither `CONTEXT-MAP.md` nor `CONTEXT.md` exists:
+If neither `GLOSSARY-MAP.md` nor `GLOSSARY.md` exists:
 
 - continue without blocking;
-- notify the user that no canonical `CONTEXT.md` exists;
+- notify the user that no canonical `GLOSSARY.md` exists;
 - establish the relevant vocabulary during the interview;
 - include that vocabulary in the PRD;
-- suggest using the future `domain-modeling` skill to create canonical context.
+- suggest using the `domain-modeling` skill to create a canonical glossary.
 
 If the user's terminology conflicts with the canonical glossary:
 

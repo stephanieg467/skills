@@ -44,7 +44,7 @@ For each task under `## Tasks`:
 1. **Read** the files the task lists and the **Pattern** reference it points to.
 2. **Implement** exactly the **Change**, honoring its **Constraints**. Write the tests the task calls for as part of the task, not at the end.
 3. **Validate** by running the task's **Validate** command. If it fails, fix and re-run. Do not start the next task until it passes. If passing would require work outside this task, stop and ask.
-4. **Commit** only the files this task changed: `git add <paths>`, then commit using the repository's message convention (check `git log --oneline -10`), for example `feat: <task title>`. Never stage plan files, report files, `docs/plans/*`, `docs/adr/*`, or `CONTEXT.md`.
+4. **Commit** only the files this task changed: `git add <paths>`, then commit using the repository's message convention (check `git log --oneline -10`), for example `feat: <task title>`. Never stage plan files, report files, `docs/plans/*`, `docs/adr/*`, or `GLOSSARY.md`.
 5. **Record** anything that differed from the plan, and why, for the report's Deviations section.
 6. **Carry lessons forward** (delegated mode only). After reviewing the worker's diff, append one line to the brief's Lessons list for each thing you corrected, each rule the worker broke, and each new shared helper or contract later tasks should reuse. Write each line as one general sentence, not a story about this task. Pass the updated list into the next brief.
 

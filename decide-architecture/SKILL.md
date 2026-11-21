@@ -84,8 +84,8 @@ Reading a Jira, Confluence, or other remote resource grants permission to read o
 For the relevant repository or system:
 
 1. Read the approved PRD, issue, epic, brief, and supplied references.
-2. Look for a repository-root `CONTEXT-MAP.md`. If present, use it to load only the relevant bounded-context `CONTEXT.md` files and understand relationships between contexts.
-3. Otherwise, read the relevant root `CONTEXT.md` when present. If no relevant `CONTEXT.md` exists, maintain a small provisional vocabulary in session memory and continue; absence of canonical domain documentation is not a blocker.
+2. Look for a repository-root `GLOSSARY-MAP.md`. If present, use it to load only the relevant bounded-context `GLOSSARY.md` files and understand relationships between contexts.
+3. Otherwise, read the relevant root `GLOSSARY.md` when present. If no relevant `GLOSSARY.md` exists, maintain a small provisional vocabulary in session memory and continue; absence of canonical domain documentation is not a blocker.
 4. Read relevant architecture documentation and ADRs. Do not read every ADR indiscriminately; use repository organization, context, and search to find decisions that constrain this initiative.
 5. Note canonical terms, `_Avoid_` synonyms, context ownership, inherited architecture, and existing decisions before discussing changes. Keep provisional terms clearly distinct from canonical terms.
 6. Inspect available references before asking whether undocumented references or constraints exist.
@@ -112,7 +112,7 @@ Scout the relevant codebase surfaces at the architecture level rather than produ
 - compatibility and coexistence constraints;
 - extension points and coupling that affect the initiative.
 
-Read relevant `CONTEXT.md`, `CONTEXT-MAP.md`, and ADRs before proposing deviations. Separate findings into:
+Read relevant `GLOSSARY.md`, `GLOSSARY-MAP.md`, and ADRs before proposing deviations. Separate findings into:
 
 - **Inherited decisions** — already established and not reopened;
 - **New decisions** — required by this initiative;
@@ -213,10 +213,10 @@ Use lightweight vocabulary discipline inline; do not invoke the full `domain-mod
 - Challenge vague, overloaded, or conflicting terminology when it affects an architecture decision.
 - Use concrete scenarios and edge cases to sharpen domain relationships and ownership.
 - Never treat an inferred or disputed term as canonical.
-- If no relevant `CONTEXT.md` exists, keep only the terms needed for this initiative in a provisional, session-local vocabulary and continue without blocking. Never create `CONTEXT.md` automatically.
+- If no relevant `GLOSSARY.md` exists, keep only the terms needed for this initiative in a provisional, session-local vocabulary and continue without blocking. Never create `GLOSSARY.md` automatically.
 - At synthesis or approval, ask once whether explicitly resolved terms should become canonical. Treat this as a separate side effect from approval of the architecture.
-- Update an existing `CONTEXT.md` only for explicitly resolved terms and only after the user authorizes that update. Respect the owning context and `CONTEXT-MAP.md`.
-- Creating a new `CONTEXT.md` requires separate explicit approval after the user elects to canonicalize the resolved terms.
+- Update an existing `GLOSSARY.md` only for explicitly resolved terms and only after the user authorizes that update. Respect the owning context and `GLOSSARY-MAP.md`.
+- Creating a new `GLOSSARY.md` requires separate explicit approval after the user elects to canonicalize the resolved terms.
 - Keep glossary entries free of implementation details and general programming vocabulary.
 - If canonicalization is declined, retain only the agreed vocabulary needed in the architecture document.
 
@@ -319,7 +319,7 @@ If the user requests an unapproved draft, still present the synthesis and ask fo
 At the approval gate, also confirm any unresolved side effects:
 
 - If the target already exists, ask whether to update it or create a new file. Never overwrite without confirmation.
-- Ask once whether explicitly resolved terms should become canonical. If yes, request explicit authorization for the proposed update to an existing owning `CONTEXT.md`, or separate approval to create a new `CONTEXT.md`; architecture approval alone authorizes neither.
+- Ask once whether explicitly resolved terms should become canonical. If yes, request explicit authorization for the proposed update to an existing owning `GLOSSARY.md`, or separate approval to create a new `GLOSSARY.md`; architecture approval alone authorizes neither.
 - Ask separately before creating an ADR.
 - Ask separately before publishing remotely or creating Jira spike tickets.
 
@@ -364,7 +364,7 @@ Use this structure, adapting headings without dropping required content:
 
 ## Domain Model and Data Ownership
 
-<Link canonical CONTEXT.md files rather than duplicating their glossaries. Describe relevant relationships, lifecycle, and ownership. If canonical documentation was declined, include only the agreed initiative vocabulary needed here.>
+<Link canonical GLOSSARY.md files rather than duplicating their glossaries. Describe relevant relationships, lifecycle, and ownership. If canonical documentation was declined, include only the agreed initiative vocabulary needed here.>
 
 ## Boundaries, Contracts, Data Flow, and Trust
 
