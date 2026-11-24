@@ -44,7 +44,7 @@ Read only the file the task needs.
 - `references/contrib-research.md` — read when deciding between contrib, a recipe, a patch, or custom code.
 - `references/module-code-patterns.md` — read when writing services, routes, controllers, forms, plugins, config schema, or database queries.
 - `references/hooks-and-events.md` — read when implementing a hook or an event subscriber, or choosing between them.
-- `references/caching.md` — read when building render arrays, blocks, or controllers that output content, or when debugging stale output.
+- `references/caching.md` — read when building render arrays, blocks, controllers, JSON responses, lazy builders, or `#access` checks, or when debugging stale output.
 - `references/translation-and-twig.md` — read when writing user-facing strings or Twig templates.
 - `references/drush-scaffolding.md` — read when generating code, creating content types or fields, or generating test content.
 - `references/version-compatibility.md` — read when targeting both D10 and D11, removing deprecations, upgrading core, or applying recipes.
@@ -59,6 +59,7 @@ Read only the file the task needs.
 - `hook_install`, `hook_update_N`, and `hook_post_update_NAME` cannot be OOP hooks. Keep them in `.install` and `.post_update.php`.
 - Internal Page Cache ignores `max-age` for anonymous users. Content that must expire for anonymous visitors needs cache tags that get invalidated, or the `page_cache_kill_switch` service.
 - Cache metadata on a variable you return separately is lost. Cache metadata only bubbles when it is attached to the render array that is actually rendered; use `CacheableMetadata::createFromObject($entity)->applyTo($build)`.
+- `#lazy_builder` arguments must be scalars (string, int, float, bool, `NULL`). Pass an entity ID and load the entity in the callback.
 - In Twig, do not add `|raw` to render arrays or `{{ content }}`. They are already safe; `|raw` on a string bypasses autoescaping and opens XSS.
 - Entity queries throw an exception on D10+ if `accessCheck()` is not called. Set it explicitly, even when the answer is `FALSE`.
 - New services, routes, hooks, or plugin classes are invisible until the cache is rebuilt. Run `drush cr` before concluding that code does not work.

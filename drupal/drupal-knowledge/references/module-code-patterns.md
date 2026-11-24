@@ -139,7 +139,9 @@ $result = $this->database->select('my_table', 't')
 
 ## Output and security
 
-- Output untrusted text with `#plain_text`, or with `#markup` (which runs `Xss::filterAdmin()`).
+- Output user input with `#plain_text` or through Twig autoescaping.
+- Use `#markup` only for trusted or admin-authored HTML; it runs `Xss::filterAdmin()`, which still allows many tags.
+- Never wrap user input in `Markup::create()`. Values implementing `MarkupInterface` skip `Xss::filterAdmin()` entirely.
 - Use `Html::escape()` for text placed into attributes or strings built by hand.
 - Validate and cast route and query parameters before use.
 - Protect state-changing GET routes with `_csrf_token: 'TRUE'`.

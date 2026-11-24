@@ -1,15 +1,29 @@
 ---
 name: drupalorg-contrib
-description: File and search Drupal.org contrib project issues and merge requests via the git.drupalcode.org GitLab API. Use this whenever the user wants to search a Drupal.org issue queue (for duplicates of a local patch, existing fixes, or related bugs), create an upstream issue, contribute a patch upstream, or open a merge request against a Drupal contrib module (e.g. canvas, webform, pathauto).
+description: File and search Drupal.org contrib project issues and merge requests on git.drupalcode.org with `glab`. Use this whenever the user wants to search a Drupal.org issue queue (for duplicates of a local patch, existing fixes, or related bugs), create an upstream issue, contribute a patch upstream, or open a merge request against a Drupal contrib module (e.g. canvas, webform, pathauto).
 disable-model-invocation: true
 ---
 
 # Drupal.org contrib: search, issue, and MR workflow
 
-Everything goes through the GitLab API at `https://git.drupalcode.org/api/v4/`. The
-non-obvious parts — and the reason this skill exists — are that drupalcode **blocks
-personal forks**, uses **shared issue forks** created by a bot command, and that some
-projects still use the legacy drupal.org issue queue where none of this applies.
+Everything goes through `glab` against git.drupalcode.org. The non-obvious parts — and
+the reason this skill exists — are that drupalcode **blocks personal forks**, uses
+**shared issue forks** created by a bot command, and that some projects still use the legacy drupal.org issue queue where none of this applies.
+
+## Prerequisites
+
+```bash
+glab --version
+glab auth status --hostname git.drupalcode.org
+```
+
+If not authenticated, stop and tell the user to run
+`glab auth login --hostname git.drupalcode.org` with a personal access token that has
+`api` scope (users log in to git.drupalcode.org with their drupal.org account via SSO).
+
+Pass `--hostname git.drupalcode.org` to every `glab api` call and
+`--repo git.drupalcode.org/project/PROJECT` to every subcommand; never rely on the
+current directory. `PROJECT_PATH` below is URL-encoded, e.g. `project%2Fcanvas`.
 
 ## Step 0: Legacy queue or GitLab work items?
 
@@ -38,14 +52,12 @@ searched, provides an existing issue/MR to use, or asks to skip duplicate huntin
 those cases, acknowledge that prior search context and continue with the requested
 issue/MR workflow instead of re-running searches.
 
-When searching is needed, the GitLab issues API is faster and more reliable than
-scraping the SPA work-items UI (which renders via JS and returns an empty shell to
-curl):
+When searching is needed, use `glab`, not the work-items UI (a JS SPA that returns an
+empty shell to fetchers):
 
 ```bash
-curl -s "https://git.drupalcode.org/api/v4/projects/PROJECT_PATH/issues?search=TERM&scope=all&per_page=20"
-# PROJECT_PATH is URL-encoded, e.g. project%2Fcanvas
-# add &state=opened to filter; results have .iid, .state, .title, .web_url
+glab issue list --repo git.drupalcode.org/project/PROJECT --all --search "TERM" -P 50
+glab issue view IID --repo git.drupalcode.org/project/PROJECT --comments
 ```
 
 Search tips that matter in practice:
@@ -57,31 +69,26 @@ Search tips that matter in practice:
 - To check whether a fix landed in a release, don't trust issue state alone: fetch the
   actual file at the release tag and compare with the default branch:
   ```bash
-  curl -s "https://git.drupalcode.org/api/v4/projects/PROJECT_PATH/repository/files/URLENCODED%2FFILE%2FPATH.php/raw?ref=TAG"
+  glab api --hostname git.drupalcode.org "/projects/PROJECT_PATH/repository/files/URLENCODED%2FFILE%2FPATH.php/raw?ref=TAG"
   ```
-- MR status: `GET /projects/PROJECT_PATH/merge_requests/IID` → `.state`, `.merged_at`.
+- MR status: `glab mr view IID --repo git.drupalcode.org/project/PROJECT`.
   An MR referenced in composer patches may still be open — worth reporting to the user.
 
-## Authentication
+## Before any write
 
-Write operations need a personal access token with `api` scope
-(GitLab → Preferences → Access Tokens; users log in to git.drupalcode.org with their
-drupal.org account via SSO).
-
-- Look for `DRUPALCODE_TOKEN` in the environment first; otherwise ask the user.
-- Pass it as a `PRIVATE-TOKEN:` header. Keep it out of the repo and out of command
-  echoes where practical (store in a mode-600 scratchpad file and `$(cat ...)` it).
-- If the user pasted the token into the chat, remind them to revoke it when done —
-  it's been exposed.
-- Verify it before use: `GET /api/v4/user` should return their username.
+- Confirm the target repo and branch with the user. A PAT is not project-scoped; it
+  reaches every repo they can write to.
+- Do not @-mention, assign, or add reviewers unless the user asks.
+- Run write calls with `-i` and check for `HTTP 201`. A bare 200 means nothing was
+  created (see Gotchas).
 
 ## Creating an issue
 
 ```bash
-curl -s -X POST -H "PRIVATE-TOKEN: $TOKEN" \
-  --data-urlencode "title=..." \
-  --data-urlencode "description@issue_body.md" \
-  "https://git.drupalcode.org/api/v4/projects/PROJECT_PATH/issues"
+glab api -i --hostname git.drupalcode.org "/projects/PROJECT_PATH/issues" \
+  -f title="..." \
+  -f description='### Overview
+...'
 # response: .iid (the issue number), .web_url
 ```
 
@@ -115,16 +122,14 @@ MR exists).
 namespace. Instead, comment the DrupalBot command on the issue:
 
 ```bash
-curl -s -X POST -H "PRIVATE-TOKEN: $TOKEN" --data-urlencode "body=/do:fork" \
-  "https://git.drupalcode.org/api/v4/projects/PROJECT_PATH/issues/IID/notes"
+glab api -i --hostname git.drupalcode.org "/projects/PROJECT_PATH/issues/IID/notes" -f body="/do:fork"
 ```
 
 DrupalBot creates a **shared fork** at `issue/PROJECT-IID` (e.g. `issue/canvas-3591772`)
 within ~10–30 seconds, with push access for whoever posted the command. Poll for it:
 
 ```bash
-curl -s -H "PRIVATE-TOKEN: $TOKEN" \
-  "https://git.drupalcode.org/api/v4/projects/issue%2FPROJECT-IID"
+glab api --hostname git.drupalcode.org "/projects/issue%2FPROJECT-IID"
 # 404 until ready; then .id, .default_branch
 ```
 
@@ -134,24 +139,40 @@ to it later; that's by design.
 ## Committing the change
 
 No local clone needed — use the commits API to create the branch and commit in one
-call. Branch naming convention is `{iid}-short-kebab-description`; commit messages
-start with `Issue #NNNNNNN:`.
+call. Branch naming convention is `{iid}-short-kebab-description`.
+
+Commit messages use Drupal Conventional Commits: `{type}: #{issue-id} Short summary`,
+where type is one of `feat`, `fix`, `docs`, `refactor`, `test`, `ci`, `perf`, `task`,
+`revert`. Credit contributors with `By:` lines using Drupal.org usernames (not GitLab
+names or `@`); ask the user if unsure.
+
+```
+fix: #3591772 Skip language-prefix redirect when canvas_multilingual is installed
+
+By: drupal-username
+```
 
 To build the file content: download the file from the fork's default branch, apply
-the local patch to it (`patch -p1 --dry-run` first), then send the whole patched file:
+the local patch to it (`patch -p1 --dry-run` first), then write the whole patched file
+into a JSON body (e.g. with `jq --rawfile` so the content is escaped) and send it:
 
-```bash
-# python/json is easier than curl form-encoding for full file contents:
-POST /api/v4/projects/issue%2FPROJECT-IID/repository/commits
+```json
 {
   "branch": "3591772-skip-language-prefix-redirect",
-  "start_branch": "1.x",                      # upstream default/target branch
-  "commit_message": "Issue #3591772: Skip language-prefix redirect when ...",
+  "start_branch": "1.x",
+  "commit_message": "fix: #3591772 Skip language-prefix redirect when ...\n\nBy: drupal-username",
   "actions": [
     {"action": "update", "file_path": "src/...php", "content": "<full file>"}
   ]
 }
 ```
+
+```bash
+glab api -i --hostname git.drupalcode.org "/projects/issue%2FPROJECT-IID/repository/commits" \
+  --input commit.json
+```
+
+`start_branch` is the upstream development branch.
 
 Use `"action": "create"` for new files (e.g. tests). Multiple files go in one
 `actions` array — keep it one commit unless there's a reason not to.
@@ -166,17 +187,21 @@ argument listed.
 Cross-project MR from the issue fork to upstream:
 
 ```bash
-POST /api/v4/projects/issue%2FPROJECT-IID/merge_requests
-{
-  "source_branch": "3591772-skip-language-prefix-redirect",
-  "target_branch": "1.x",                     # or 11.x etc. — the development branch
-  "target_project_id": <upstream numeric id>, # GET /projects/PROJECT_PATH → .id
-  "title": "#3591772: Skip language-prefix redirect when canvas_multilingual is installed",
-  "description": "Fixes #3591772.\n\n<what and why, note anything reviewers should check>",
-  "allow_collaboration": true                 # Drupal norm: maintainers push to MR branches
-}
+glab api --hostname git.drupalcode.org "/projects/PROJECT_PATH"   # upstream .id
+glab api -i --hostname git.drupalcode.org "/projects/issue%2FPROJECT-IID/merge_requests" \
+  -F target_project_id=UPSTREAM_ID \
+  -f source_branch="3591772-skip-language-prefix-redirect" \
+  -f target_branch="1.x" \
+  -f title="fix: #3591772 Skip language-prefix redirect when canvas_multilingual is installed" \
+  -f description='Closes #3591772.
+
+What and why; note anything reviewers should check.' \
+  -F allow_collaboration=true
 # response: .iid, .web_url
 ```
+
+The MR title follows the commit format because GitLab squash-merges use it as the
+commit message. `allow_collaboration` is the Drupal norm: maintainers push to MR branches.
 
 `target_project_id` is what makes it land on the upstream project instead of the
 fork. Target the development branch (`1.x`, `2.x`, `11.x`), never a release tag —
@@ -193,13 +218,23 @@ Report the issue and MR URLs plainly, then offer these follow-ups:
   local patch file is more stable; the MR URL self-documents the upstream thread.
   Either way, put the issue number in the patch description or filename.
 - Remind the user to set the issue's version/component and "Needs review" status in
-  the web UI, and to revoke the token if it was shared in chat.
+  the web UI.
+
+## Gotchas
+
+- HTTP writes must go to `git.drupalcode.org`. A write sent to `git.drupal.org` is
+  redirected and downgraded to a GET: it returns 200 with a list and creates nothing.
+- SSH `git push` goes to `git@git.drupal.org:…`, not drupalcode (the drupalcode CDN has
+  no SSH listener, so the push hangs).
+- `-f field=@file` does not read the file; it sends the literal string `@file`. Pass
+  text inline in single quotes, or send a JSON body with `--input`.
+- Use `-f` for strings and `-F` for integers and booleans.
 
 ## Troubleshooting
 
 - **Fork API returns 301 / drupal.org/git-error** → expected; use `/do:fork`.
 - **`issue/PROJECT-IID` 404s after a minute** → check the `/do:fork` note posted
-  (GET the issue notes); the bot only reacts to the bare command as the note body.
+  (`glab issue view IID --repo ... --comments`); the bot only reacts to the bare command as the note body.
 - **Empty results scraping work_items pages** → it's a JS SPA; use the API.
 - **GitLab project search finds nothing for a contrib module** → the module may not
   be migrated (Step 0), or issues may live under a former project name.
