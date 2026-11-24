@@ -57,6 +57,14 @@ Link findings to `path:line-line` ranges or named symbols and summarize why each
 
 Require concise, source-linked findings and verify load-bearing claims.
 
+Before designing, load every available skill whose description matches the affected surfaces, even when the workflow or upstream docs do not name it:
+
+- the platform or framework skill (e.g. WordPress, Drupal);
+- testing standards, if the plan adds or changes tests;
+- design vocabulary, if the plan adds or reshapes modules or seams.
+
+Apply their guidance to the approach, tasks, and test choices.
+
 ### 3. Resolve Implementation-Changing Questions — Gate
 
 After reconnaissance, ask one small numbered cluster of questions only for choices whose answers would change implementation. Typical topics are scope boundaries, competing repository patterns, contract shape, failure behavior, or measurable acceptance behavior.
@@ -108,6 +116,8 @@ Use the structure below adaptively. Omit empty or irrelevant sections rather tha
 ## Inherited Decisions
 
 <Approved architecture, ADRs, repository rules, and contracts this work must preserve, with links.>
+
+<Skills loaded and applied, e.g. platform, testing, design.>
 
 ## Implementation Evidence
 
@@ -178,6 +188,7 @@ Before writing, verify that:
 
 - implementation-changing decisions are resolved or explicitly approved assumptions;
 - inherited architecture and repository standards remain intact;
+- matching platform, testing, and design skills were loaded and their guidance applied;
 - tasks are concrete, scoped, and dependency-aware;
 - every task has a Validate command;
 - evidence links target the relevant source ranges or symbols;
